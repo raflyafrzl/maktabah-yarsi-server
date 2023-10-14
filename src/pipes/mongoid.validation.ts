@@ -4,7 +4,7 @@ import {
   Injectable,
   PipeTransform,
 } from '@nestjs/common';
-import mongoose, { Types } from 'mongoose';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class MongoIdValidation implements PipeTransform {

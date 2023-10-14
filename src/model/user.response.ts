@@ -1,13 +1,12 @@
-import { Exclude, Type } from 'class-transformer';
+import { Exclude, Transform } from 'class-transformer';
 
-import { Types } from 'mongoose';
-import { User } from 'src/schemas/user.schema';
+import { ObjectId } from 'mongoose';
 export class UserModelResponse {
-  @Exclude()
-  id: Types.ObjectId;
-
   username: string;
 
+  @Transform(({ value }) => value.toString(), { toPlainOnly: true })
+  _id: ObjectId;
+  @Exclude()
   password: string;
   email: string;
 

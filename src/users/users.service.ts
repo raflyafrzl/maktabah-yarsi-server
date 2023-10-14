@@ -28,4 +28,9 @@ export class UsersService {
     );
     return result;
   }
+
+  async findOneById(id: string) {
+    const result = this.userModel.findById(id);
+    return result;
+  }
 }

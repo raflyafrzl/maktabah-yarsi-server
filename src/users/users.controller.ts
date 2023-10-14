@@ -1,10 +1,20 @@
-import { Body, Controller, Get, Param, Patch } from '@nestjs/common';
+import {
+  Body,
+  ClassSerializerInterceptor,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  UseInterceptors,
+} from '@nestjs/common';
 import CreateOrUpdateUserDTO, { validationUpdateUser } from '../dto/user.dto';
 import { JoiValidation } from 'src/pipes/validation.pipe';
 import { UsersService } from './users.service';
 import { User } from '../schemas/user.schema';
 import { ResponseWebSuccess } from 'src/model/response.web';
 import { MongoIdValidation } from 'src/pipes/mongoid.validation';
+import { UserModelResponse } from 'src/model/user.response';
+import { plainToClass, serialize } from 'class-transformer';
 
 @Controller('api/v1/users')
 export class UsersController {
@@ -33,6 +43,20 @@ export class UsersController {
       status: 'success',
       message: 'Data has been successfully updated',
       statusCode: 200,
+    };
+  }
+  @Get(':id')
+  @UseInterceptors(ClassSerializerInterceptor)
+  async findById(
+    @Param('id', MongoIdValidation) id: string,
+  ): Promise<ResponseWebSuccess> {
+    const result = await this.userService.findOneById(id);
+    const data = new UserModelResponse(result.toJSON());
+    return {
+      data: data,
+      message: 'A data has been successfully retrieved',
+      statusCode: 200,
+      status: 'success',
     };
   }
 }

@@ -5,9 +5,6 @@ export type UserDocument = HydratedDocument<User>;
 
 @Schema({ versionKey: false })
 export class User {
-  @Prop()
-  _id: mongoose.Schema.Types.ObjectId;
-
   @Prop({ required: true, unique: true })
   username: string;
 
@@ -21,4 +18,4 @@ export class User {
   role: string;
 }
 
-export const CatSchema = SchemaFactory.createForClass(User);
+export const UserSchema = SchemaFactory.createForClass(User);
