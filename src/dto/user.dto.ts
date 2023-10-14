@@ -6,6 +6,11 @@ export default interface CreateOrUpdateUserDTO {
   email: string;
 }
 
+export interface UserSignInDTO {
+  username: string;
+  password: string;
+}
+
 export const validationCreateUser: Joi.ObjectSchema<CreateOrUpdateUserDTO> =
   Joi.object({
     username: Joi.string().min(5, 'utf-8').required(),
@@ -19,3 +24,8 @@ export const validationUpdateUser: Joi.ObjectSchema<CreateOrUpdateUserDTO> =
     password: Joi.string().min(5, 'utf-8'),
     email: Joi.string().email(),
   });
+
+export const validationSignIn: Joi.ObjectSchema<UserSignInDTO> = Joi.object({
+  username: Joi.string().required(),
+  password: Joi.string().required(),
+});

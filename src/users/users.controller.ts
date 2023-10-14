@@ -3,6 +3,7 @@ import {
   ClassSerializerInterceptor,
   Controller,
   Get,
+  NotFoundException,
   Param,
   Patch,
   UseInterceptors,
@@ -51,6 +52,9 @@ export class UsersController {
     @Param('id', MongoIdValidation) id: string,
   ): Promise<ResponseWebSuccess> {
     const result = await this.userService.findOneById(id);
+    if (!result) {
+      throw new NotFoundException('No data found');
+    }
     const data = new UserModelResponse(result.toJSON());
     return {
       data: data,
