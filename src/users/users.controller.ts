@@ -6,6 +6,7 @@ import {
   NotFoundException,
   Param,
   Patch,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import CreateOrUpdateUserDTO, { validationUpdateUser } from '../dto/user.dto';
@@ -15,12 +16,20 @@ import { User } from '../schemas/user.schema';
 import { ResponseWebSuccess } from 'src/model/response.web';
 import { MongoIdValidation } from 'src/pipes/mongoid.validation';
 import { UserModelResponse } from 'src/model/user.response';
-import { plainToClass, serialize } from 'class-transformer';
+import { AuthGuard } from 'src/guards/auth.guard';
+import { AdminGuard } from 'src/guards/admin.guard';
 
 @Controller('api/v1/users')
 export class UsersController {
   constructor(private userService: UsersService) {}
 
+  /**
+   * @method GET
+   * @endpoint /api/v1/users
+   * @access Private
+   * @returns Object Response
+   */
+  @UseGuards(AuthGuard, AdminGuard)
   @Get('/')
   async find(): Promise<ResponseWebSuccess> {
     const result: User[] = await this.userService.findAll();

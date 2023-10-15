@@ -7,7 +7,11 @@ import AuthController from './auth/auth.controller';
 import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [MongooseModule.forRoot(process.env.MONGODB_URL), UsersModule, AuthModule],
+  imports: [
+    MongooseModule.forRoot(process.env.MONGODB_URL),
+    UsersModule,
+    AuthModule,
+  ],
   controllers: [AppController, AuthController],
   providers: [AppService],
 })
