@@ -6,6 +6,7 @@ import {
   NotFoundException,
   Param,
   Patch,
+  UseFilters,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -18,6 +19,7 @@ import { MongoIdValidation } from 'src/pipes/mongoid.validation';
 import { UserModelResponse } from 'src/model/user.response';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { AdminGuard } from 'src/guards/admin.guard';
+import { HttpExceptionFilter } from 'src/exception/http-exception.filter';
 
 @Controller('api/v1/users')
 export class UsersController {
@@ -31,6 +33,7 @@ export class UsersController {
    */
   @UseGuards(AuthGuard, AdminGuard)
   @Get('/')
+  @UseFilters(HttpExceptionFilter)
   async find(): Promise<ResponseWebSuccess> {
     const result: User[] = await this.userService.findAll();
     return {

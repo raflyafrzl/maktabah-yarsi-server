@@ -25,6 +25,7 @@ export default class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('/login')
+  @HttpCode(HttpStatus.OK)
   async login(
     @Body(new JoiValidation(validationSignIn)) payload: UserSignInDTO,
   ): Promise<ResponseWebSuccess> {

@@ -5,6 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { CustomClientException } from 'src/exception/custom.exception';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -29,7 +30,11 @@ export class AuthGuard implements CanActivate {
 
       request['user'] = payload;
     } catch (err) {
-      throw new UnauthorizedException(err.message);
+      throw new CustomClientException(
+        'Invalid credential provided',
+        401,
+        'JWT',
+      );
     }
 
     return true;
