@@ -19,11 +19,17 @@ import { AuthService } from './auth.service';
 import { ResponseWebSuccess } from 'src/model/response.web';
 import { UserModelResponse } from 'src/model/user.response';
 import { MongoExceptionFilter } from 'src/exception/mongo-exception.filter';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @Controller('api/v1/auth')
+@ApiTags('Auth')
 export default class AuthController {
   constructor(private authService: AuthService) {}
 
+  @ApiOperation({ summary: 'to get data user' })
+  @ApiResponse({ status: 200, description: 'token has been created' })
+  @ApiResponse({ status: 400, description: 'invalid username or password' })
+  @ApiResponse({ status: 500, description: 'There is an error on server' })
   @Post('/login')
   @HttpCode(HttpStatus.OK)
   async login(
@@ -43,6 +49,9 @@ export default class AuthController {
   @HttpCode(HttpStatus.CREATED)
   @UseInterceptors(ClassSerializerInterceptor)
   @Post('/register')
+  @ApiOperation({ summary: 'to register user' })
+  @ApiResponse({ status: 201, description: 'success registered data' })
+  @ApiResponse({ status: 400, description: 'invalid payload provided' })
   @UsePipes(new JoiValidation(validationCreateUser))
   @UseFilters(MongoExceptionFilter)
   async register(

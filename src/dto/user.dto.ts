@@ -1,13 +1,39 @@
+import { ApiProperty } from '@nestjs/swagger';
 import * as Joi from 'joi';
 
-export default interface CreateOrUpdateUserDTO {
+export default class CreateOrUpdateUserDTO {
+  @ApiProperty({
+    type: String,
+    description: 'username user',
+    default: 'maktabahyarsi',
+  })
   username: string;
+  @ApiProperty({
+    type: String,
+    description: 'password user',
+    default: 'maktabahyarsi123',
+  })
   password: string;
+  @ApiProperty({
+    type: String,
+    description: 'email for user',
+    default: 'maktabahyarsi@yarsi.ac.id',
+  })
   email: string;
 }
 
-export interface UserSignInDTO {
+export class UserSignInDTO {
+  @ApiProperty({
+    type: String,
+    description: 'username user for login',
+    default: 'maktabahyarsi',
+  })
   username: string;
+  @ApiProperty({
+    type: String,
+    description: 'password user for login',
+    default: 'maktabahyarsi123',
+  })
   password: string;
 }
 

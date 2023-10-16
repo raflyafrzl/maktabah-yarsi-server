@@ -20,8 +20,10 @@ import { UserModelResponse } from 'src/model/user.response';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { AdminGuard } from 'src/guards/admin.guard';
 import { HttpExceptionFilter } from 'src/exception/http-exception.filter';
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @Controller('api/v1/users')
+@ApiTags('User')
 export class UsersController {
   constructor(private userService: UsersService) {}
 
@@ -34,6 +36,8 @@ export class UsersController {
   @UseGuards(AuthGuard, AdminGuard)
   @Get('/')
   @UseFilters(HttpExceptionFilter)
+  @ApiOperation({ summary: 'Get all data of users' })
+  @ApiResponse({ status: 200, description: 'Success retrieved data' })
   async find(): Promise<ResponseWebSuccess> {
     const result: User[] = await this.userService.findAll();
     return {
@@ -45,6 +49,21 @@ export class UsersController {
   }
 
   @Patch(':id')
+  @ApiParam({
+    name: 'id',
+    description: 'parameter id to get specific user',
+    examples: {
+      'valid example': { value: '652bd4956971572c592f7576' },
+      'invalid example': { value: '111111111' },
+    },
+  })
+  @ApiOperation({ summary: 'update data user' })
+  @ApiResponse({
+    status: 200,
+    description: 'Data has been successfully updated',
+  })
+  @ApiResponse({ status: 400, description: 'Invalid id provided' })
+  @ApiResponse({ status: 500, description: 'There is an error server' })
   async update(
     @Body(new JoiValidation(validationUpdateUser))
     payload: CreateOrUpdateUserDTO,
@@ -59,6 +78,18 @@ export class UsersController {
     };
   }
   @Get(':id')
+  @ApiParam({
+    name: 'id',
+    description: 'parameter id to get specific user',
+    examples: {
+      'valid example': { value: '652bd4956971572c592f7576' },
+      'invalid example': { value: '123474747' },
+    },
+  })
+  @ApiOperation({ summary: 'get specific data user' })
+  @ApiResponse({ status: 400, description: 'Invalid id provided' })
+  @ApiResponse({ status: 200, description: 'Success retrived a data' })
+  @ApiResponse({ status: 500, description: 'There is an error on server' })
   @UseInterceptors(ClassSerializerInterceptor)
   async findById(
     @Param('id', MongoIdValidation) id: string,

@@ -1,6 +1,12 @@
+import { ApiProperty } from '@nestjs/swagger';
 import * as Joi from 'joi';
 
-export interface CreateOrUpdateCategoryDTO {
+export class CreateOrUpdateCategoryDTO {
+  @ApiProperty({
+    type: String,
+    description: 'name of category',
+    default: 'Fiqih',
+  })
   name: string;
 }
 
