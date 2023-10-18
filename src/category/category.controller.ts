@@ -6,8 +6,10 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  Patch,
   Post,
   UseFilters,
+  UseGuards,
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { ResponseWebSuccess } from 'src/model/response.web';
@@ -16,6 +18,7 @@ import { JoiValidation } from 'src/pipes/validation.pipe';
 import {
   CreateOrUpdateCategoryDTO,
   validationCategoryCreate,
+  validationUpdateCategory,
 } from 'src/dto/category.dto';
 import { MongoIdValidation } from 'src/pipes/mongoid.validation';
 import { MongoExceptionFilter } from 'src/exception/mongo-exception.filter';
@@ -25,6 +28,8 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { AuthGuard } from 'src/guards/auth.guard';
+import { AdminGuard } from 'src/guards/admin.guard';
 
 @Controller('api/v1/category')
 @ApiTags('Category')
@@ -48,10 +53,12 @@ export class CategoryController {
       message: 'Data has been successfully retrieved',
     };
   }
-  @ApiOperation({ summary: 'Create a category' })
+
   @Post('/')
+  @UseGuards(AuthGuard, AdminGuard)
   @UseFilters(MongoExceptionFilter)
   @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'Create a category' })
   @ApiResponse({ status: 201, description: 'success create a category' })
   @ApiResponse({ status: 400, description: 'Invalid payload provided' })
   @ApiResponse({ status: 500, description: 'There is an error on server' })
@@ -63,7 +70,7 @@ export class CategoryController {
 
     return {
       data: result,
-      message: 'Data has been successfully created',
+      message: 'A category has been successfully created',
       status: 'success',
       statusCode: 201,
     };
@@ -73,6 +80,7 @@ export class CategoryController {
   @ApiResponse({ status: 400, description: 'Invalid id provided' })
   @ApiOperation({ summary: 'Delete a category based on the id' })
   @Delete(':id')
+  @UseGuards(AuthGuard, AdminGuard)
   async delete(
     @Param('id', MongoIdValidation) id: string,
   ): Promise<ResponseWebSuccess> {
@@ -80,9 +88,27 @@ export class CategoryController {
 
     return {
       data: `${id}`,
-      message: 'Category has been successfully deleted',
-      status: 'failed',
+      message: 'A category has been successfully deleted',
+      status: 'success',
       statusCode: 200,
+    };
+  }
+
+  //TODO: Create API DOCUMENTATION
+  @Patch(':id')
+  @UseGuards(AuthGuard, AdminGuard)
+  @UseFilters(MongoExceptionFilter)
+  async update(
+    @Param('id', MongoIdValidation) id: string,
+    @Body(new JoiValidation(validationUpdateCategory))
+    payload: CreateOrUpdateCategoryDTO,
+  ): Promise<ResponseWebSuccess> {
+    const result = await this.categoryService.updateOne(id, payload);
+    return {
+      data: result,
+      status: 'success',
+      statusCode: 200,
+      message: 'A category has been succesfully updated',
     };
   }
 }

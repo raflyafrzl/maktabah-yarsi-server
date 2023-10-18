@@ -11,7 +11,7 @@ export class AppController {
   getHello(): any {
     return {
       message: 'Welcome to Maktabah Yarsi API',
-      version: '1.0',
+      version: Intl.DateTimeFormat().resolvedOptions().timeZone,
     };
   }
 }

@@ -15,7 +15,7 @@ export class MongoExceptionFilter implements ExceptionFilter {
         error = {
           status: 'failed',
           statusCode: 400,
-          message: `${match[1]} has been taken by someone else, please try other ${match[1]}`,
+          message: `${match[1]} has been used, please try other ${match[1]}`,
         };
     }
 

@@ -21,4 +21,16 @@ export class CategoryService {
     const result = this.category.findByIdAndDelete(id);
     return result;
   }
+
+  async updateOne(id: string, payload: CreateOrUpdateCategoryDTO) {
+    if (payload.total) {
+      const data = await this.category.findById(id);
+      payload.total = data.total + 1;
+    }
+    const result = this.category.findByIdAndUpdate(id, payload, {
+      new: true,
+      runValidators: true,
+    });
+    return result;
+  }
 }
