@@ -11,6 +11,7 @@ async function bootstrap() {
   app.disable('x-powered-by');
   app.enableCors();
 
+  //api documentation
   const config = new DocumentBuilder()
     .setTitle('Maktabah Yarsi API Documentation')
     .setDescription(

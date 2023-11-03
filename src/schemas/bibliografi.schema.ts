@@ -4,18 +4,26 @@ import { HydratedDocument, Types } from 'mongoose';
 
 export type BiblioDocument = HydratedDocument<Bibliography>;
 
-@Schema()
+@Schema({
+  versionKey: false,
+  toJSON: {
+    virtuals: true,
+    transform(doc, ret) {
+      delete ret.id;
+    },
+  },
+})
 export class Bibliography {
-  @Prop()
+  @Prop({ required: true, unique: true })
   title: string;
 
-  @Prop()
+  @Prop({ required: true })
   description: string;
 
   @Prop()
   contributor: string;
 
-  @Prop()
+  @Prop({ required: true })
   creator: string;
 
   @Prop()
@@ -27,7 +35,11 @@ export class Bibliography {
   @Prop()
   source: string;
 
-  @Prop()
+  @Prop({
+    required: true,
+    default:
+      'https://islandpress.org/sites/default/files/default_book_cover_2015.jpg',
+  })
   image_url: string;
 
   @Prop({ type: Types.ObjectId, ref: Category.name })
@@ -38,3 +50,9 @@ export class Bibliography {
 }
 
 export const BiblioSchema = SchemaFactory.createForClass(Bibliography);
+//relationship
+BiblioSchema.virtual('category', {
+  ref: Category.name,
+  localField: 'category_id',
+  foreignField: '_id',
+});

@@ -1,12 +1,16 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
+
 import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from './users/users.module';
 import AuthController from './auth/auth.controller';
 import { AuthModule } from './auth/auth.module';
 
 import { CategoryModule } from './category/category.module';
+import { BibliografiModule } from './bibliografi/bibliografi.module';
+import { VisitorService } from './visitor/visitor.service';
+import { VisitorController } from './visitor/visitor.controller';
+import { VisitorModule } from './visitor/visitor.module';
 
 @Module({
   imports: [
@@ -14,8 +18,10 @@ import { CategoryModule } from './category/category.module';
     UsersModule,
     AuthModule,
     CategoryModule,
+    BibliografiModule,
+    VisitorModule,
   ],
   controllers: [AppController, AuthController],
-  providers: [AppService],
+  providers: [],
 })
 export class AppModule {}

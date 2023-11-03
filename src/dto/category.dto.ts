@@ -16,13 +16,28 @@ export class CreateOrUpdateCategoryDTO {
   total: number;
 }
 
-export const validationCategoryCreate: Joi.ObjectSchema<CreateOrUpdateCategoryDTO> =
-  Joi.object({
-    name: Joi.string().required(),
-  });
+export class CreateOrUpdateSubCategoryDTO {
+  name: string;
+  id: string;
+}
+export class QueryParamCategoryDTO {
+  result: string;
+}
+
+export const validationCategoryCreate: Joi.ObjectSchema<
+  CreateOrUpdateCategoryDTO | CreateOrUpdateSubCategoryDTO
+> = Joi.object({
+  id: Joi.string(),
+  name: Joi.string().required(),
+});
 
 export const validationUpdateCategory: Joi.ObjectSchema<CreateOrUpdateCategoryDTO> =
   Joi.object({
     name: Joi.string(),
     total: Joi.number(),
+  });
+
+export const validationQueryCategory: Joi.ObjectSchema<QueryParamCategoryDTO> =
+  Joi.object({
+    result: Joi.string().valid('sub', 'category'),
   });

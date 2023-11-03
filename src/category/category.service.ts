@@ -1,19 +1,50 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { CreateOrUpdateCategoryDTO } from 'src/dto/category.dto';
-import { Category } from 'src/schemas/category.schema';
+import mongoose, { Model } from 'mongoose';
+import {
+  CreateOrUpdateCategoryDTO,
+  CreateOrUpdateSubCategoryDTO,
+  QueryParamCategoryDTO,
+} from 'src/dto/category.dto';
+import { CustomClientException } from 'src/exception/custom.exception';
+import { Category, SubCategory } from 'src/schemas/category.schema';
 
 @Injectable()
 export class CategoryService {
-  constructor(@InjectModel(Category.name) private category: Model<Category>) {}
+  constructor(
+    @InjectModel(Category.name) private category: Model<Category>,
+    @InjectModel(SubCategory.name) private subCategory: Model<SubCategory>,
+  ) {}
 
   async find() {
-    const result = this.category.find();
+    const result = this.category.find().populate('subcategories');
     return result;
   }
-  async create(payload: CreateOrUpdateCategoryDTO) {
-    const result = this.category.create(payload);
+
+  async findOne(name: string) {
+    const result = this.category.findOne({ name });
+    return result;
+  }
+
+  async create(
+    payload: CreateOrUpdateSubCategoryDTO | CreateOrUpdateCategoryDTO,
+    query: QueryParamCategoryDTO,
+  ) {
+    let result: Category | SubCategory;
+    if (payload['id'] && query.result === 'sub') {
+      const data = await this.category.findById(payload['id']);
+      if (!data) {
+        throw new CustomClientException('No data found', 400, 'BAD_REQUST');
+      }
+
+      result = await this.subCategory.create({
+        name: payload.name,
+        category: mongoose.Types.ObjectId.createFromHexString(payload['id']),
+      });
+    } else {
+      delete payload['id'];
+      result = await this.category.create(payload);
+    }
     return result;
   }
 
@@ -32,5 +63,8 @@ export class CategoryService {
       runValidators: true,
     });
     return result;
+  }
+  async findOneSub(id: string) {
+    return this.subCategory.findById(id);
   }
 }

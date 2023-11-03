@@ -8,6 +8,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseFilters,
   UseGuards,
 } from '@nestjs/common';
@@ -17,7 +18,10 @@ import { Category } from 'src/schemas/category.schema';
 import { JoiValidation } from 'src/pipes/validation.pipe';
 import {
   CreateOrUpdateCategoryDTO,
+  CreateOrUpdateSubCategoryDTO,
+  QueryParamCategoryDTO,
   validationCategoryCreate,
+  validationQueryCategory,
   validationUpdateCategory,
 } from 'src/dto/category.dto';
 import { MongoIdValidation } from 'src/pipes/mongoid.validation';
@@ -28,6 +32,8 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { CustomClientException } from 'src/exception/custom.exception';
+import { HttpExceptionFilter } from 'src/exception/http-exception.filter';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { AdminGuard } from 'src/guards/admin.guard';
 
@@ -44,13 +50,32 @@ export class CategoryController {
     description: 'Category has been retrieved successfully',
   })
   @ApiResponse({ status: 500, description: 'There is an error on server' })
-  async getAll(): Promise<ResponseWebSuccess> {
+  async get(): Promise<ResponseWebSuccess> {
     const result: Category[] = await this.categoryService.find();
     return {
       statusCode: 200,
       status: 'success',
       data: result,
       message: 'Data has been successfully retrieved',
+    };
+  }
+
+  //TODO: API DOCUMENTATION
+  @Get(':name')
+  @ApiOperation({ summary: 'find a category base on the name' })
+  @ApiResponse({ status: 200, description: 'success retrieved a data' })
+  @UseFilters(HttpExceptionFilter)
+  async findOne(@Param('name') name: string): Promise<ResponseWebSuccess> {
+    const result = await this.categoryService.findOne(name);
+
+    if (!result)
+      throw new CustomClientException('No data found', 400, 'DATA_NOT_FOUND');
+
+    return {
+      data: result,
+      message: 'A category has been successfully retrieved',
+      status: 'Success',
+      statusCode: 200,
     };
   }
 
@@ -64,12 +89,14 @@ export class CategoryController {
   @ApiResponse({ status: 500, description: 'There is an error on server' })
   async create(
     @Body(new JoiValidation(validationCategoryCreate))
-    payload: CreateOrUpdateCategoryDTO,
+    payload: CreateOrUpdateSubCategoryDTO | CreateOrUpdateCategoryDTO,
+    @Query(new JoiValidation(validationQueryCategory))
+    query: QueryParamCategoryDTO,
   ): Promise<ResponseWebSuccess> {
-    const result = await this.categoryService.create(payload);
+    await this.categoryService.create(payload, query);
 
     return {
-      data: result,
+      data: payload,
       message: 'A category has been successfully created',
       status: 'success',
       statusCode: 201,
@@ -109,6 +136,32 @@ export class CategoryController {
       status: 'success',
       statusCode: 200,
       message: 'A category has been succesfully updated',
+    };
+  }
+
+  @Get('/sub')
+  async getSub(): Promise<ResponseWebSuccess> {
+    const result = await this.categoryService.find();
+
+    return {
+      data: result,
+      message: 'Sub categories has been successfully retrieved',
+      status: 'success',
+      statusCode: 200,
+    };
+  }
+
+  @Get('/sub/:id')
+  async getSubById(
+    @Param('id', MongoIdValidation) id: string,
+  ): Promise<ResponseWebSuccess> {
+    const result = await this.categoryService.findOneSub(id);
+
+    return {
+      data: result,
+      message: 'A sub category has been succesfully retrieved',
+      status: 'success',
+      statusCode: 200,
     };
   }
 }
