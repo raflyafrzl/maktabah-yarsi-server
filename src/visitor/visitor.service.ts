@@ -45,7 +45,7 @@ export class VisitorService {
       return;
     }
 
-    this.visitor.updateOne(
+    return this.visitor.updateOne(
       {
         month: monthString,
         year: date.getFullYear(),
@@ -55,6 +55,9 @@ export class VisitorService {
         $set: {
           total: result.total + 1,
         },
+      },
+      {
+        new: true,
       },
     );
   }

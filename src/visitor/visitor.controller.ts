@@ -10,9 +10,16 @@ export class VisitorController {
   constructor(private visitorService: VisitorService) {}
 
   @Get('/')
-  async createOrUpdate() {
+  async createOrUpdate(): Promise<ResponseWebSuccess> {
     const date = moment().locale('id').toDate();
-    await this.visitorService.createOrUpdate(date);
+    const result = await this.visitorService.createOrUpdate(date);
+
+    return {
+      data: result,
+      message: 'success updated data',
+      status: 'success',
+      statusCode: 200,
+    };
   }
 
   @Get('/:month')
