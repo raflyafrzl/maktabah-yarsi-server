@@ -60,7 +60,6 @@ export class CategoryController {
     };
   }
 
-  //TODO: API DOCUMENTATION
   @Get(':name')
   @ApiOperation({ summary: 'find a category base on the name' })
   @ApiResponse({ status: 200, description: 'success retrieved a data' })
@@ -121,10 +120,12 @@ export class CategoryController {
     };
   }
 
-  //TODO: Create API DOCUMENTATION
   @Patch(':id')
   @UseGuards(AuthGuard, AdminGuard)
   @UseFilters(MongoExceptionFilter)
+  @ApiResponse({ status: 200, description: 'success updated a category' })
+  @ApiResponse({ status: 400, description: 'Invalid id provided' })
+  @ApiOperation({ summary: 'update a category' })
   async update(
     @Param('id', MongoIdValidation) id: string,
     @Body(new JoiValidation(validationUpdateCategory))
@@ -140,6 +141,9 @@ export class CategoryController {
   }
 
   @Get('/sub')
+  @ApiResponse({ status: 200, description: 'success retrieved sub category' })
+  @ApiResponse({ status: 500, description: 'Internal Server Error' })
+  @ApiOperation({ summary: 'get list of sub category ' })
   async getSub(): Promise<ResponseWebSuccess> {
     const result = await this.categoryService.find();
 
@@ -151,6 +155,9 @@ export class CategoryController {
     };
   }
 
+  @ApiResponse({ status: 200, description: 'success retrieved a sub category' })
+  @ApiResponse({ status: 404, description: 'sub category not found' })
+  @ApiOperation({ summary: 'retrieved a  category ' })
   @Get('/sub/:id')
   async getSubById(
     @Param('id', MongoIdValidation) id: string,

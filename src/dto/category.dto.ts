@@ -17,7 +17,17 @@ export class CreateOrUpdateCategoryDTO {
 }
 
 export class CreateOrUpdateSubCategoryDTO {
+  @ApiProperty({
+    type: String,
+    description: 'name of sub category',
+    default: 'Fiqih',
+  })
   name: string;
+  @ApiProperty({
+    type: String,
+    description: 'id of category',
+    default: 'valid id category',
+  })
   id: string;
 }
 export class QueryParamCategoryDTO {

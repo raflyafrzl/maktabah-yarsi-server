@@ -15,7 +15,7 @@ export class AuthService {
   ) {}
 
   async signIn(payload: UserSignInDTO): Promise<string> {
-    const result = await this.userModel.findOne({ username: payload.username });
+    const result = await this.userModel.findOne({ email: payload.email });
 
     if (!result) throw new BadRequestException('Invalid username or password');
 

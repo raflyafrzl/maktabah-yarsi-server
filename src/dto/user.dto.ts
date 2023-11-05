@@ -26,9 +26,9 @@ export class UserSignInDTO {
   @ApiProperty({
     type: String,
     description: 'username user for login',
-    default: 'maktabahyarsi',
+    default: 'maktabahyarsi@gmail.com',
   })
-  username: string;
+  email: string;
   @ApiProperty({
     type: String,
     description: 'password user for login',
@@ -52,6 +52,6 @@ export const validationUpdateUser: Joi.ObjectSchema<CreateOrUpdateUserDTO> =
   });
 
 export const validationSignIn: Joi.ObjectSchema<UserSignInDTO> = Joi.object({
-  username: Joi.string().required(),
+  email: Joi.string().required().email(),
   password: Joi.string().required(),
 });

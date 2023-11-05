@@ -11,7 +11,7 @@ export class Visitor {
   @Prop({ required: true })
   month: string;
   @Prop({ required: true })
-  date: string;
+  range: number;
   @Prop({ required: true, type: Number })
   year: number;
 }
