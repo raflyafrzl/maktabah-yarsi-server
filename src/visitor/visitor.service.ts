@@ -36,13 +36,12 @@ export class VisitorService {
     });
 
     if (!result) {
-      this.visitor.create({
+      return this.visitor.create({
         range: actualRange,
         total: 1,
         month: monthString,
         year: date.getFullYear(),
       });
-      return;
     }
 
     return this.visitor.updateOne(

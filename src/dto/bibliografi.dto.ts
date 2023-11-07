@@ -13,10 +13,12 @@ export class BibliografiCreateDTO {
 
 export class QueryFindBibliografi {
   title: string;
+  sort: string;
 }
 export const validationQueryFindBibliografi: Joi.ObjectSchema<QueryFindBibliografi> =
   Joi.object({
     title: Joi.string(),
+    sort: Joi.string().valid('createdAt', 'total'),
   });
 
 export const validationCreateBibliografi: Joi.ObjectSchema<BibliografiCreateDTO> =

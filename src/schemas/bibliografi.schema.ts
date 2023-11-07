@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Category, SubCategory } from './category.schema';
-import { HydratedDocument, Types } from 'mongoose';
+import { HydratedDocument, Types, now } from 'mongoose';
 
 export type BiblioDocument = HydratedDocument<Bibliography>;
 
@@ -47,6 +47,12 @@ export class Bibliography {
 
   @Prop({ type: Types.ObjectId, ref: SubCategory.name })
   subcategory_id: SubCategory;
+
+  @Prop({ default: now() })
+  createdAt: Date;
+
+  @Prop({ default: 0 })
+  total: number;
 }
 
 export const BiblioSchema = SchemaFactory.createForClass(Bibliography);

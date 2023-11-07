@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseFilters,
+} from '@nestjs/common';
 import { BibliografiService } from './bibliografi.service';
 import { ResponseWebSuccess } from 'src/model/response.web';
 import { JoiValidation } from 'src/pipes/validation.pipe';
@@ -9,6 +18,8 @@ import {
   validationQueryFindBibliografi,
 } from 'src/dto/bibliografi.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { HttpExceptionFilter } from 'src/exception/http-exception.filter';
+import { MongoExceptionFilter } from 'src/exception/mongo-exception.filter';
 
 @ApiTags('bibliografi')
 @Controller('api/v1/bibliografi')
@@ -16,6 +27,7 @@ export class BibliografiController {
   constructor(private biblioService: BibliografiService) {}
 
   @Get('/')
+  @UseFilters(HttpExceptionFilter)
   async get(
     @Query(new JoiValidation(validationQueryFindBibliografi))
     query: QueryFindBibliografi,
@@ -32,6 +44,7 @@ export class BibliografiController {
   @ApiResponse({ status: 201, description: 'success create a bibliografi' })
   @ApiResponse({ status: 400, description: 'Invalid payload provided' })
   @ApiResponse({ status: 500, description: 'There is an error on server' })
+  @UseFilters(HttpExceptionFilter)
   @Post('/')
   async create(
     @Body(new JoiValidation(validationCreateBibliografi))
@@ -44,6 +57,20 @@ export class BibliografiController {
       message: 'Book has been successfully created',
       status: 'success',
       statusCode: 201,
+    };
+  }
+
+  @Patch('/:id')
+  @UseFilters(MongoExceptionFilter)
+  @UseFilters(HttpExceptionFilter)
+  async updateViews(@Param('id') id: string): Promise<ResponseWebSuccess> {
+    const result = await this.biblioService.updateViews(id);
+
+    return {
+      data: result,
+      message: 'success updating a view',
+      status: 'success',
+      statusCode: 200,
     };
   }
 }

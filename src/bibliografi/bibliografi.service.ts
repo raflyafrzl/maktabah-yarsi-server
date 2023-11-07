@@ -14,11 +14,28 @@ export class BibliografiService {
   ) {}
 
   async find(query: QueryFindBibliografi) {
-    if (!query.title) return this.bibliografi.find({ title: query.title });
-    return this.bibliografi.find();
+    let result = this.bibliografi.find();
+    if (!query.title) {
+      result = result.find({ title: query.title });
+    }
+
+    if (query.sort) {
+      const sortBy = query.sort.split(',').join(' ');
+      result = result.sort(sortBy);
+    }
+
+    return result;
   }
 
   async create(payload: BibliografiCreateDTO) {
     this.bibliografi.create(payload);
+  }
+  async updateViews(id: string) {
+    const result = await this.bibliografi.findOne({ _id: id });
+
+    return this.bibliografi.updateOne(
+      { _id: result._id },
+      { $set: { total: result.total + 1 } },
+    );
   }
 }
