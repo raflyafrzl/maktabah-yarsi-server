@@ -22,6 +22,11 @@ export default class CreateOrUpdateUserDTO {
   email: string;
 }
 
+export class AuthLoginDTO {
+  token: string;
+  id: string;
+}
+
 export class UserSignInDTO {
   @ApiProperty({
     type: String,
