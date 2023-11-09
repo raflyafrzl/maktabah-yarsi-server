@@ -79,6 +79,7 @@ export class CategoryController {
   }
 
   @Post('/')
+  //TODO:uncomment Guards
   // @UseGuards(AuthGuard, AdminGuard)
   @UseFilters(MongoExceptionFilter)
   @HttpCode(HttpStatus.CREATED)

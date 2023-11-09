@@ -16,7 +16,7 @@ export class BibliografiService {
   async find(query: QueryFindBibliografi) {
     let result = this.bibliografi.find();
     if (!query.title) {
-      result = result.find({ title: query.title });
+      result = result.find({ title: { $regex: `/${query.title}/` } });
     }
 
     if (query.sort) {

@@ -10,6 +10,7 @@ import {
   UsePipes,
 } from '@nestjs/common';
 import CreateOrUpdateUserDTO, {
+  AuthLoginDTO,
   UserSignInDTO,
   validationCreateUser,
   validationSignIn,
@@ -43,6 +44,18 @@ export default class AuthController {
       message: 'User has been successfully log in',
       statusCode: 200,
       status: 'success',
+    };
+  }
+
+  @Post('/loginauth')
+  async loginWithAuth(
+    @Body() token: AuthLoginDTO,
+  ): Promise<ResponseWebSuccess> {
+    return {
+      statusCode: 201,
+      status: 'success',
+      data: '-',
+      message: 'you have successfully login with google',
     };
   }
 
