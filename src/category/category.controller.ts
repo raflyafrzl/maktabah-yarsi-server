@@ -79,7 +79,7 @@ export class CategoryController {
   }
 
   @Post('/')
-  @UseGuards(AuthGuard, AdminGuard)
+  // @UseGuards(AuthGuard, AdminGuard)
   @UseFilters(MongoExceptionFilter)
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Create a category' })
