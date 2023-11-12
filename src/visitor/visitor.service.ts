@@ -9,7 +9,7 @@ export class VisitorService {
   constructor(@InjectModel(Visitor.name) private visitor: Model<Visitor>) {}
 
   async find(month: string) {
-    return this.visitor.find({ month: month });
+    return this.visitor.find({ month: month }).sort('range');
   }
 
   async createOrUpdate(date: Date) {

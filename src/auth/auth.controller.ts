@@ -21,6 +21,7 @@ import { ResponseWebSuccess } from 'src/model/response.web';
 import { UserModelResponse } from 'src/model/user.response';
 import { MongoExceptionFilter } from 'src/exception/mongo-exception.filter';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { HttpExceptionFilter } from 'src/exception/http-exception.filter';
 
 @Controller('api/v1/auth')
 @ApiTags('Auth')
@@ -48,13 +49,15 @@ export default class AuthController {
   }
 
   @Post('/loginauth')
+  @UseFilters(HttpExceptionFilter)
   async loginWithAuth(
     @Body() token: AuthLoginDTO,
   ): Promise<ResponseWebSuccess> {
+    const result = await this.authService.findOrSave(token.token);
     return {
       statusCode: 201,
       status: 'success',
-      data: '-',
+      data: 'test',
       message: 'you have successfully login with google',
     };
   }

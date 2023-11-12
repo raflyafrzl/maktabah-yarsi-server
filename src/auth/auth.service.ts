@@ -7,8 +7,9 @@ import CreateOrUpdateUserDTO, {
   UserSignInDTO,
 } from 'src/dto/user.dto';
 import { User } from 'src/schemas/user.schema';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { UsersService } from 'src/users/users.service';
+import { getToken } from 'src/utils/validate.token';
 @Injectable()
 export class AuthService {
   constructor(
@@ -47,5 +48,11 @@ export class AuthService {
   async register(payload: CreateOrUpdateUserDTO): Promise<User> {
     const result = await this.userService.create(payload);
     return result.toJSON();
+  }
+
+  async findOrSave(token: string) {
+    const { data } = await getToken(token);
+
+    return data;
   }
 }

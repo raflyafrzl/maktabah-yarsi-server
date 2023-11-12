@@ -65,6 +65,7 @@ export const validationQueryFindBibliografi: Joi.ObjectSchema<QueryFindBibliogra
 
 export const validationCreateBibliografi: Joi.ObjectSchema<BibliografiCreateDTO> =
   Joi.object({
+    publisher: Joi.string().required(),
     title: Joi.string().required(),
     description: Joi.string().required(),
     contributor: Joi.string().required(),

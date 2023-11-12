@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 
 export type UserDocument = HydratedDocument<User>;
-
+export type UserGoogleDocument = HydratedDocument<UserGoogle>;
 @Schema({ versionKey: false })
 export class User {
   @Prop({ required: true, unique: true })
@@ -18,4 +18,13 @@ export class User {
   role: string;
 }
 
+@Schema({ versionKey: false })
+export class UserGoogle {
+  @Prop({ required: true, unique: true })
+  email: string;
+  @Prop({ required: true })
+  name: string;
+}
+
+export const UserGoogleSchema = SchemaFactory.createForClass(UserGoogle);
 export const UserSchema = SchemaFactory.createForClass(User);

@@ -7,7 +7,7 @@ export class CreateOrUpdateCategoryDTO {
     description: 'name of category',
     default: 'Fiqih',
   })
-  name: string;
+  name?: string;
   @ApiProperty({
     type: Number,
     description: 'list books in the category',
