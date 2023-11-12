@@ -51,6 +51,7 @@ export class BibliografiCreateDTO {
     description: 'category of the bibliografi',
   })
   category: string;
+  subcategory: string;
 }
 
 export class QueryFindBibliografi {

@@ -44,9 +44,19 @@ export class BibliografiService {
       total: 1,
     };
 
-    await this.categoryService.updateOne(id, addTotal);
+    this.categoryService.updateOne(id, addTotal);
 
-    this.bibliografi.create(payload);
+    this.bibliografi.create({
+      title: payload.title,
+      contributor: payload.contributor,
+      source: payload.source,
+      category_id: id,
+      subcategory_id: payload.subcategory,
+      image_url: payload.image_url,
+      description: payload.description,
+      publisher: payload.publisher,
+      creator: payload.creator,
+    });
   }
   async updateViews(id: string) {
     const result = await this.bibliografi.findOne({ _id: id });
