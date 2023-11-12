@@ -53,6 +53,9 @@ export class Bibliography {
 
   @Prop({ default: 0 })
   total: number;
+
+  @Prop({ default: 0 })
+  page: number;
 }
 
 export const BiblioSchema = SchemaFactory.createForClass(Bibliography);

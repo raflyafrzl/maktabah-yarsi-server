@@ -56,6 +56,7 @@ export class BibliografiService {
       description: payload.description,
       publisher: payload.publisher,
       creator: payload.creator,
+      page: payload.page,
     });
   }
   async updateViews(id: string) {

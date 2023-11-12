@@ -51,7 +51,13 @@ export class BibliografiCreateDTO {
     description: 'category of the bibliografi',
   })
   category: string;
+  @ApiProperty({
+    default: 'iasdjadjajxxj',
+    type: String,
+    description: 'subcategory of the bibliografi',
+  })
   subcategory: string;
+  page: string;
 }
 
 export class QueryFindBibliografi {
