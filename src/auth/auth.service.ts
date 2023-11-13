@@ -20,10 +20,7 @@ export class AuthService {
   ) {}
 
   async signIn(payload: UserSignInDTO): Promise<AuthLoginDTO> {
-    let result: User | UserGoogle =
-      await this.userService.createOrFindUserGoogle({
-        email: payload.email,
-      });
+    let result: User | UserGoogle;
     if (!payload.isUsingGoogle) {
       result = await this.userModel.findOne({ email: payload.email });
 
@@ -37,6 +34,10 @@ export class AuthService {
       if (!isMatchPassword) {
         throw new BadRequestException('Invalid username or password');
       }
+    } else {
+      result = await this.userService.createOrFindUserGoogle({
+        email: payload.email,
+      });
     }
 
     const dataToken = {
