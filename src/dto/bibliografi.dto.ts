@@ -68,11 +68,15 @@ export class BibliografiCreateOrUpdateDTO {
 export class QueryFindBibliografi {
   id: string;
   sort: string;
+  category: string;
+  sub_category: string;
 }
 export const validationQueryFindBibliografi: Joi.ObjectSchema<QueryFindBibliografi> =
   Joi.object({
     title: Joi.string(),
     sort: Joi.string().valid('createdAt', 'total'),
+    category: Joi.string(),
+    sub_category: Joi.string(),
   });
 
 export const validationCreateBibliografi: Joi.ObjectSchema<BibliografiCreateOrUpdateDTO> =

@@ -32,6 +32,16 @@ export class BibliografiService {
       result = result.sort(sortBy).limit(7).skip(0);
     }
 
+    if (query.category) {
+      result = result.find({ category_id: query.category });
+      return result;
+    }
+
+    if (query.sub_category) {
+      result = result.find({ subcategory_id: query.sub_category });
+      return result;
+    }
+
     return result;
   }
 
