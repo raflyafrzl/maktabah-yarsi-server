@@ -83,6 +83,7 @@ export class CategoryController {
   @Post('/')
   //TODO:uncomment Guards
   // @UseGuards(AuthGuard, AdminGuard)
+  @UseFilters(HttpExceptionFilter)
   @UseFilters(MongoExceptionFilter)
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Create a category' })
@@ -109,6 +110,7 @@ export class CategoryController {
   @ApiResponse({ status: 400, description: 'Invalid id provided' })
   @ApiOperation({ summary: 'Delete a category based on the id' })
   @Delete(':id')
+  @UseFilters(MongoExceptionFilter)
   @UseGuards(AuthGuard, AdminGuard)
   async delete(
     @Param('id', MongoIdValidation) id: string,
@@ -150,6 +152,7 @@ export class CategoryController {
   @ApiResponse({ status: 404, description: 'subcategories not found' })
   @ApiOperation({ summary: 'retrieved subtegories ' })
   @Get('/sub/:id')
+  @UseFilters(HttpExceptionFilter)
   async getSubById(
     @Param('id', MongoIdValidation) id: string,
   ): Promise<ResponseWebSuccess> {

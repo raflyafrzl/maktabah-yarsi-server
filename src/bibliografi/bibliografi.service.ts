@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { CategoryService } from 'src/category/category.service';
 import {
-  BibliografiCreateDTO,
+  BibliografiCreateOrUpdateDTO,
   QueryFindBibliografi,
 } from 'src/dto/bibliografi.dto';
 import { CreateOrUpdateCategoryDTO } from 'src/dto/category.dto';
@@ -20,19 +20,22 @@ export class BibliografiService {
 
   async find(query: QueryFindBibliografi) {
     let result = this.bibliografi.find().populate('category');
-    if (query.title) {
-      result = result.find({ title: { $regex: `/${query.title}/` } });
+    if (query.id) {
+      result = result.find({
+        _id: mongoose.Types.ObjectId.createFromHexString(query.id),
+      });
+      return result;
     }
 
     if (query.sort) {
       const sortBy = query.sort.split(',').join(' ');
-      result = result.sort(sortBy);
+      result = result.sort(sortBy).limit(7).skip(0);
     }
 
     return result;
   }
 
-  async create(payload: BibliografiCreateDTO) {
+  async create(payload: BibliografiCreateOrUpdateDTO) {
     const result: Category = await this.categoryService.findOne(
       payload.category,
     );

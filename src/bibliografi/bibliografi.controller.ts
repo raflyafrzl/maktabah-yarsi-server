@@ -12,7 +12,7 @@ import { BibliografiService } from './bibliografi.service';
 import { ResponseWebSuccess } from 'src/model/response.web';
 import { JoiValidation } from 'src/pipes/validation.pipe';
 import {
-  BibliografiCreateDTO,
+  BibliografiCreateOrUpdateDTO,
   QueryFindBibliografi,
   validationCreateBibliografi,
   validationQueryFindBibliografi,
@@ -20,6 +20,7 @@ import {
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { HttpExceptionFilter } from 'src/exception/http-exception.filter';
 import { MongoExceptionFilter } from 'src/exception/mongo-exception.filter';
+import { MongoIdValidation } from 'src/pipes/mongoid.validation';
 
 @ApiTags('bibliografi')
 @Controller('api/v1/bibliografi')
@@ -48,7 +49,7 @@ export class BibliografiController {
   @Post('/')
   async create(
     @Body(new JoiValidation(validationCreateBibliografi))
-    payload: BibliografiCreateDTO,
+    payload: BibliografiCreateOrUpdateDTO,
   ): Promise<ResponseWebSuccess> {
     await this.biblioService.create(payload);
 
@@ -61,9 +62,11 @@ export class BibliografiController {
   }
 
   @Patch('/:id')
-  @UseFilters(MongoExceptionFilter)
   @UseFilters(HttpExceptionFilter)
-  async updateViews(@Param('id') id: string): Promise<ResponseWebSuccess> {
+  @UseFilters(MongoExceptionFilter)
+  async updateViews(
+    @Param('id', MongoIdValidation) id: string,
+  ): Promise<ResponseWebSuccess> {
     const result = await this.biblioService.updateViews(id);
 
     return {

@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import * as Joi from 'joi';
 
-export class BibliografiCreateDTO {
+export class BibliografiCreateOrUpdateDTO {
   @ApiProperty({
     default: 'Kajian Fiqih',
     description: 'title of bibliografi',
@@ -66,7 +66,7 @@ export class BibliografiCreateDTO {
 }
 
 export class QueryFindBibliografi {
-  title: string;
+  id: string;
   sort: string;
 }
 export const validationQueryFindBibliografi: Joi.ObjectSchema<QueryFindBibliografi> =
@@ -75,7 +75,21 @@ export const validationQueryFindBibliografi: Joi.ObjectSchema<QueryFindBibliogra
     sort: Joi.string().valid('createdAt', 'total'),
   });
 
-export const validationCreateBibliografi: Joi.ObjectSchema<BibliografiCreateDTO> =
+export const validationCreateBibliografi: Joi.ObjectSchema<BibliografiCreateOrUpdateDTO> =
+  Joi.object({
+    publisher: Joi.string().required(),
+    title: Joi.string().required(),
+    description: Joi.string().required(),
+    contributor: Joi.string().required(),
+    creator: Joi.string().required(),
+    source: Joi.string().required(),
+    image_url: Joi.string().required().uri(),
+    category: Joi.string().required(),
+    subcategory: Joi.string().required(),
+    page: Joi.number().required(),
+  });
+
+export const validationUpdateCategory: Joi.ObjectSchema<BibliografiCreateOrUpdateDTO> =
   Joi.object({
     publisher: Joi.string().required(),
     title: Joi.string().required(),

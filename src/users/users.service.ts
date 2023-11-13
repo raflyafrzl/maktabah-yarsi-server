@@ -4,7 +4,6 @@ import { User, UserGoogle } from '../schemas/user.schema';
 import { Model } from 'mongoose';
 import CreateOrUpdateUserDTO, { UserAuthGoogleDTO } from 'src/dto/user.dto';
 import * as bcrypt from 'bcryptjs';
-import { CustomClientException } from 'src/exception/custom.exception';
 @Injectable()
 export class UsersService {
   constructor(
@@ -47,6 +46,6 @@ export class UsersService {
     //If user with this auth already registered then do not create the acc
     if (result) return result;
 
-    return this.userAuth.create(data);
+    return this.userAuth.create({ username: data.name, email: data.email });
   }
 }
