@@ -9,7 +9,7 @@ import {
 import { CreateOrUpdateCategoryDTO } from 'src/dto/category.dto';
 import { CustomClientException } from 'src/exception/custom.exception';
 import { Bibliography } from 'src/schemas/bibliografi.schema';
-import { Category } from 'src/schemas/category.schema';
+import { Category, SubCategory } from 'src/schemas/category.schema';
 
 @Injectable()
 export class BibliografiService {
@@ -40,12 +40,24 @@ export class BibliografiService {
       throw new CustomClientException('No Category Found', 400, 'BAD_REQUEST');
 
     const id: string = result['_id'].toString();
-    const addTotal: CreateOrUpdateCategoryDTO = {
+    const categoryUpdate: CreateOrUpdateCategoryDTO = {
       total: 1,
+      name: result.name,
     };
 
-    this.categoryService.updateOne(id, addTotal);
+    this.categoryService.updateOne(id, categoryUpdate);
 
+    const resultSub: SubCategory = await this.categoryService.findOneSubByName(
+      payload.subcategory,
+    );
+
+    if (!resultSub)
+      throw new CustomClientException('No Category Found', 400, 'BAD_REQUEST');
+
+    this.categoryService.updateSubCategory({
+      name: resultSub.name,
+      total: 1,
+    });
     this.bibliografi.create({
       title: payload.title,
       contributor: payload.contributor,

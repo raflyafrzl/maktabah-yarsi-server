@@ -2,10 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserGoogle } from '../schemas/user.schema';
 import { Model } from 'mongoose';
-import CreateOrUpdateUserDTO from 'src/dto/user.dto';
+import CreateOrUpdateUserDTO, { UserAuthGoogleDTO } from 'src/dto/user.dto';
 import * as bcrypt from 'bcryptjs';
-import axios from 'axios';
-
+import { CustomClientException } from 'src/exception/custom.exception';
 @Injectable()
 export class UsersService {
   constructor(
@@ -38,5 +37,16 @@ export class UsersService {
   async findOneById(id: string) {
     const result = this.userModel.findById(id);
     return result;
+  }
+
+  async createOrFindUserGoogle(data: UserAuthGoogleDTO) {
+    const result: UserGoogle = await this.userAuth.findOne({
+      email: data.email,
+    });
+
+    //If user with this auth already registered then do not create the acc
+    if (result) return result;
+
+    return this.userAuth.create(data);
   }
 }

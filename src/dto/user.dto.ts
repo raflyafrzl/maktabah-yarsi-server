@@ -23,8 +23,18 @@ export default class CreateOrUpdateUserDTO {
 }
 
 export class AuthLoginDTO {
+  @ApiProperty({
+    type: String,
+    description: 'access token google',
+    default: 'aksdasdlaso131hsadklasdklasdhjasdhjkadshjjadkjchashksadsadhj',
+  })
   token: string;
   id: string;
+}
+
+export class UserAuthGoogleDTO {
+  email: string;
+  name?: string;
 }
 
 export class UserSignInDTO {
@@ -40,6 +50,8 @@ export class UserSignInDTO {
     default: 'maktabahyarsi123',
   })
   password: string;
+
+  isUsingGoogle?: boolean;
 }
 
 export const validationCreateUser: Joi.ObjectSchema<CreateOrUpdateUserDTO> =
@@ -59,4 +71,5 @@ export const validationUpdateUser: Joi.ObjectSchema<CreateOrUpdateUserDTO> =
 export const validationSignIn: Joi.ObjectSchema<UserSignInDTO> = Joi.object({
   email: Joi.string().required().email(),
   password: Joi.string().required(),
+  isUsingGoogle: Joi.boolean(),
 });

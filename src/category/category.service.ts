@@ -53,6 +53,24 @@ export class CategoryService {
     return result;
   }
 
+  async updateSubCategory(payload: CreateOrUpdateCategoryDTO) {
+    if (payload.total) {
+      const data: SubCategory = await this.subCategory.findOne({
+        name: payload.name,
+      });
+      payload.total = data.total + 1;
+    }
+    const result = this.subCategory.updateOne(
+      { name: payload.name },
+      { $set: payload },
+      {
+        new: true,
+        runValidators: true,
+      },
+    );
+    return result;
+  }
+
   async updateOne(id: string, payload: CreateOrUpdateCategoryDTO) {
     if (payload.total) {
       const data = await this.category.findById(id);
@@ -64,7 +82,12 @@ export class CategoryService {
     });
     return result;
   }
-  async findOneSub(id: string) {
-    return this.subCategory.findById(id);
+  async findSubByCategoryId(id: string) {
+    return this.subCategory.find({
+      category: id,
+    });
+  }
+  async findOneSubByName(name: string) {
+    return this.subCategory.findOne({ name: name });
   }
 }

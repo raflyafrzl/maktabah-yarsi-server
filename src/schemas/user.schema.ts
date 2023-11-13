@@ -22,8 +22,12 @@ export class User {
 export class UserGoogle {
   @Prop({ required: true, unique: true })
   email: string;
+
   @Prop({ required: true })
-  name: string;
+  username: string;
+
+  @Prop({ required: true, default: 'user' })
+  role: string;
 }
 
 export const UserGoogleSchema = SchemaFactory.createForClass(UserGoogle);

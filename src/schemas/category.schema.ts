@@ -16,6 +16,7 @@ export type SubCategoryDocument = HydratedDocument<SubCategory>;
 export class Category {
   @Prop({ required: true, unique: true })
   name: string;
+
   @Prop({ required: true, default: 0, type: Number })
   total: number;
 }
@@ -23,6 +24,9 @@ export class Category {
 export class SubCategory {
   @Prop({ required: true, unique: true })
   name: string;
+
+  @Prop({ required: true, default: 0 })
+  total: number;
 
   @Prop({ type: Types.ObjectId, ref: Category.name })
   category: Category;

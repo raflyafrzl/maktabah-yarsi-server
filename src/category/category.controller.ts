@@ -14,7 +14,7 @@ import {
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { ResponseWebSuccess } from 'src/model/response.web';
-import { Category } from 'src/schemas/category.schema';
+import { Category, SubCategory } from 'src/schemas/category.schema';
 import { JoiValidation } from 'src/pipes/validation.pipe';
 import {
   CreateOrUpdateCategoryDTO,
@@ -65,7 +65,9 @@ export class CategoryController {
   @ApiResponse({ status: 200, description: 'success retrieved a data' })
   @UseFilters(HttpExceptionFilter)
   async findOne(@Param('name') name: string): Promise<ResponseWebSuccess> {
-    const result = await this.categoryService.findOne(name);
+    const result: Category | undefined = await this.categoryService.findOne(
+      name,
+    );
 
     if (!result)
       throw new CustomClientException('No data found', 400, 'DATA_NOT_FOUND');
@@ -141,30 +143,18 @@ export class CategoryController {
     };
   }
 
-  @Get('/sub')
-  @ApiResponse({ status: 200, description: 'success retrieved sub category' })
-  @ApiResponse({ status: 500, description: 'Internal Server Error' })
-  @ApiOperation({ summary: 'get list of sub category ' })
-  async getSub(): Promise<ResponseWebSuccess> {
-    const result = await this.categoryService.find();
-
-    return {
-      data: result,
-      message: 'Sub categories has been successfully retrieved',
-      status: 'success',
-      statusCode: 200,
-    };
-  }
-
-  @ApiResponse({ status: 200, description: 'success retrieved a sub category' })
-  @ApiResponse({ status: 404, description: 'sub category not found' })
-  @ApiOperation({ summary: 'retrieved a  category ' })
+  @ApiResponse({
+    status: 200,
+    description: 'success retrieved subcategories by category id',
+  })
+  @ApiResponse({ status: 404, description: 'subcategories not found' })
+  @ApiOperation({ summary: 'retrieved subtegories ' })
   @Get('/sub/:id')
   async getSubById(
     @Param('id', MongoIdValidation) id: string,
   ): Promise<ResponseWebSuccess> {
-    const result = await this.categoryService.findOneSub(id);
-
+    const result: SubCategory[] =
+      await this.categoryService.findSubByCategoryId(id);
     return {
       data: result,
       message: 'A sub category has been succesfully retrieved',

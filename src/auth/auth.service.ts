@@ -4,9 +4,10 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import CreateOrUpdateUserDTO, {
   AuthLoginDTO,
+  UserAuthGoogleDTO,
   UserSignInDTO,
 } from 'src/dto/user.dto';
-import { User } from 'src/schemas/user.schema';
+import { User, UserGoogle } from 'src/schemas/user.schema';
 import * as bcrypt from 'bcryptjs';
 import { UsersService } from 'src/users/users.service';
 import { getToken } from 'src/utils/validate.token';
@@ -19,21 +20,27 @@ export class AuthService {
   ) {}
 
   async signIn(payload: UserSignInDTO): Promise<AuthLoginDTO> {
-    const result = await this.userModel.findOne({ email: payload.email });
+    let result: User | UserGoogle =
+      await this.userService.createOrFindUserGoogle({
+        email: payload.email,
+      });
+    if (!payload.isUsingGoogle) {
+      result = await this.userModel.findOne({ email: payload.email });
 
-    if (!result) throw new BadRequestException('Invalid username or password');
+      if (!result)
+        throw new BadRequestException('Invalid username or password');
+      const isMatchPassword = await bcrypt.compare(
+        payload.password,
+        (result as User).password,
+      );
 
-    const isMatchPassword = await bcrypt.compare(
-      payload.password,
-      result.password,
-    );
-
-    if (!isMatchPassword) {
-      throw new BadRequestException('Invalid username or password');
+      if (!isMatchPassword) {
+        throw new BadRequestException('Invalid username or password');
+      }
     }
 
     const dataToken = {
-      id: result._id,
+      id: result['_id'].toString(),
       username: result.username,
       role: result.role,
     };
@@ -41,7 +48,7 @@ export class AuthService {
     const token = await this.jwtService.signAsync(dataToken);
     return {
       token,
-      id: result._id.toString(),
+      id: dataToken.id,
     };
   }
 
@@ -53,6 +60,13 @@ export class AuthService {
   async findOrSave(token: string) {
     const { data } = await getToken(token);
 
-    return data;
+    const payload: UserAuthGoogleDTO = {
+      name: data['name'],
+      email: data['email'],
+    };
+
+    const result = await this.userService.createOrFindUserGoogle(payload);
+
+    return result;
   }
 }

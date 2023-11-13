@@ -22,13 +22,14 @@ import { UserModelResponse } from 'src/model/user.response';
 import { MongoExceptionFilter } from 'src/exception/mongo-exception.filter';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { HttpExceptionFilter } from 'src/exception/http-exception.filter';
+import { UserGoogle } from 'src/schemas/user.schema';
 
 @Controller('api/v1/auth')
 @ApiTags('Auth')
 export default class AuthController {
   constructor(private authService: AuthService) {}
 
-  @ApiOperation({ summary: 'to get data user' })
+  @ApiOperation({ summary: 'to get token user' })
   @ApiResponse({ status: 200, description: 'token has been created' })
   @ApiResponse({ status: 400, description: 'invalid username or password' })
   @ApiResponse({ status: 500, description: 'There is an error on server' })
@@ -48,17 +49,53 @@ export default class AuthController {
     };
   }
 
-  @Post('/loginauth')
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'create user with linked with google account' })
+  @ApiResponse({
+    status: 201,
+    description: 'success create user with auth google',
+  })
+  @ApiResponse({ status: 400, description: 'Invalid payload requested' })
+  @ApiResponse({ status: 500, description: 'internal server error' })
+  @Post('/registerauth')
   @UseFilters(HttpExceptionFilter)
-  async loginWithAuth(
-    @Body() token: AuthLoginDTO,
-  ): Promise<ResponseWebSuccess> {
+  async registerAuth(@Body() token: AuthLoginDTO): Promise<ResponseWebSuccess> {
     const result = await this.authService.findOrSave(token.token);
     return {
       statusCode: 201,
       status: 'success',
-      data: 'test',
+      data: result,
       message: 'you have successfully login with google',
+    };
+  }
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'login user with linked with google account' })
+  @ApiResponse({
+    status: 200,
+    description: 'success login  with auth google',
+  })
+  @ApiResponse({ status: 400, description: 'Invalid payload requested' })
+  @ApiResponse({ status: 500, description: 'internal server error' })
+  @Post('/loginauth')
+  @UseFilters(HttpExceptionFilter)
+  async loginAuth(@Body() token: AuthLoginDTO): Promise<ResponseWebSuccess> {
+    const result: UserGoogle = await this.authService.findOrSave(token.token);
+
+    const payload: UserSignInDTO = {
+      email: result.email,
+      password: null,
+      isUsingGoogle: true,
+    };
+
+    const token_auth: AuthLoginDTO = await this.authService.signIn(payload);
+
+    return {
+      status: 'success',
+      statusCode: 200,
+      message: 'You have successfully login with google',
+      data: {
+        access_token: token_auth,
+      },
     };
   }
 

@@ -57,6 +57,11 @@ export class BibliografiCreateDTO {
     description: 'subcategory of the bibliografi',
   })
   subcategory: string;
+  @ApiProperty({
+    default: 124,
+    type: Number,
+    description: 'total page of the bibliografi',
+  })
   page: string;
 }
 
@@ -80,4 +85,6 @@ export const validationCreateBibliografi: Joi.ObjectSchema<BibliografiCreateDTO>
     source: Joi.string().required(),
     image_url: Joi.string().required().uri(),
     category: Joi.string().required(),
+    subcategory: Joi.string().required(),
+    page: Joi.number().required(),
   });
