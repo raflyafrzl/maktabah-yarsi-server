@@ -73,7 +73,7 @@ export class QueryFindBibliografi {
 }
 export const validationQueryFindBibliografi: Joi.ObjectSchema<QueryFindBibliografi> =
   Joi.object({
-    title: Joi.string(),
+    id: Joi.string(),
     sort: Joi.string().valid('createdAt', 'total'),
     category: Joi.string(),
     sub_category: Joi.string(),
