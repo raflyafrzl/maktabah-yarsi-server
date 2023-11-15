@@ -1,7 +1,10 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Patch, Query } from '@nestjs/common';
 import * as moment from 'moment';
 import { JoiValidation } from 'src/pipes/validation.pipe';
-import { validationVisitor } from 'src/schemas/visitor.schema';
+import {
+  QueryParamVisitorDTO,
+  validationQueryVisitor,
+} from 'src/schemas/visitor.schema';
 import { VisitorService } from './visitor.service';
 import { ResponseWebSuccess } from 'src/model/response.web';
 
@@ -9,7 +12,7 @@ import { ResponseWebSuccess } from 'src/model/response.web';
 export class VisitorController {
   constructor(private visitorService: VisitorService) {}
 
-  @Get('/')
+  @Patch('/')
   async createOrUpdate(): Promise<ResponseWebSuccess> {
     const date = moment().locale('id').toDate();
     const result = await this.visitorService.createOrUpdate(date);
@@ -22,11 +25,13 @@ export class VisitorController {
     };
   }
 
-  @Get('/:month')
+  @Get('/')
   async findByMonth(
-    @Param('month', new JoiValidation(validationVisitor)) month: string,
+    @Query(new JoiValidation(validationQueryVisitor))
+    query: QueryParamVisitorDTO,
   ): Promise<ResponseWebSuccess> {
-    const result = await this.visitorService.find(month);
+    const result = await this.visitorService.find(query);
+
     return {
       status: 'success',
       statusCode: 200,

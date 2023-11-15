@@ -1,19 +1,25 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import moment from 'moment';
+import * as moment from 'moment';
 import { Model } from 'mongoose';
-import { Visitor } from 'src/schemas/visitor.schema';
+import { QueryParamVisitorDTO, Visitor } from 'src/schemas/visitor.schema';
 
 @Injectable()
 export class VisitorService {
   constructor(@InjectModel(Visitor.name) private visitor: Model<Visitor>) {}
 
-  async find(month: string) {
-    return this.visitor.find({ month: month }).sort('range');
+  async find(query: QueryParamVisitorDTO) {
+    return this.visitor
+      .find({ month: query.month, year: Number(query.year) })
+      .sort('range')
+      .lean();
   }
 
   async createOrUpdate(date: Date) {
-    const monthString: string = moment().month(date.getMonth()).format('MMMM');
+    const monthString: string = moment()
+      .month(date.getMonth())
+      .format('MMMM')
+      .toLowerCase();
     const rangeDate: number = date.getDate();
     let actualRange = 1;
     if (rangeDate >= 1 && rangeDate <= 5) {
@@ -44,7 +50,7 @@ export class VisitorService {
       });
     }
 
-    return this.visitor.updateOne(
+    return this.visitor.findOneAndUpdate(
       {
         month: monthString,
         year: date.getFullYear(),
