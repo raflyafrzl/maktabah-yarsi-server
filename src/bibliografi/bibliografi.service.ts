@@ -19,7 +19,10 @@ export class BibliografiService {
   ) {}
 
   async find(query: QueryFindBibliografi) {
-    let result = this.bibliografi.find().populate('category');
+    let result = this.bibliografi
+      .find()
+      .populate('category')
+      .populate('sub_category');
     if (query.id) {
       result = result.find({
         _id: mongoose.Types.ObjectId.createFromHexString(query.id),
@@ -29,11 +32,20 @@ export class BibliografiService {
 
     if (query.sort) {
       const sortBy = query.sort.split(',').join(' ');
-      result = result.sort(sortBy).limit(7).skip(0);
+      result = result.sort(sortBy).limit(6).skip(0);
     }
-
+    let res;
     if (query.category) {
-      result = result.find({ category_id: query.category });
+      if (!mongoose.Types.ObjectId.isValid(query.category)) {
+        res = await this.categoryService.findOne(query.category);
+        query.category = res['_id'].toString();
+      }
+      result = result.find({
+        category_id: mongoose.Types.ObjectId.createFromHexString(
+          query.category,
+        ),
+      });
+
       return result;
     }
 
@@ -75,8 +87,8 @@ export class BibliografiService {
       title: payload.title,
       contributor: payload.contributor,
       source: payload.source,
-      category_id: id,
-      subcategory_id: payload.subcategory,
+      category_id: mongoose.Types.ObjectId.createFromHexString(id),
+      subcategory_id: resultSub['_id'],
       image_url: payload.image_url,
       description: payload.description,
       publisher: payload.publisher,

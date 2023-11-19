@@ -34,7 +34,14 @@ export class UsersService {
   }
 
   async findOneById(id: string) {
-    const result = this.userModel.findById(id);
+    let result;
+
+    result = this.userModel.findById(id);
+
+    if (!result) {
+      result = this.userAuth.findById(id);
+    }
+
     return result;
   }
 

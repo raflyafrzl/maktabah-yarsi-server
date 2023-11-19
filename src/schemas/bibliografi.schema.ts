@@ -65,3 +65,9 @@ BiblioSchema.virtual('category', {
   localField: 'category_id',
   foreignField: '_id',
 });
+
+BiblioSchema.virtual('sub_category', {
+  ref: SubCategory.name,
+  localField: 'subcategory_id',
+  foreignField: '_id',
+});

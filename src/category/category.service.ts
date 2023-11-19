@@ -22,7 +22,7 @@ export class CategoryService {
   }
 
   async findOne(name: string) {
-    const result = this.category.findOne({ name });
+    const result = this.category.findOne({ name: name });
     return result;
   }
 
