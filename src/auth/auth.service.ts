@@ -40,10 +40,13 @@ export class AuthService {
       });
     }
 
+    const google: boolean = payload.isUsingGoogle ? true : false;
+
     const dataToken = {
       id: result['_id'].toString(),
       username: result.username,
       role: result.role,
+      google: google,
     };
 
     const token = await this.jwtService.signAsync(dataToken);

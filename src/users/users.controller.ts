@@ -6,6 +6,7 @@ import {
   NotFoundException,
   Param,
   Patch,
+  Req,
   UseFilters,
   UseGuards,
   UseInterceptors,
@@ -91,10 +92,15 @@ export class UsersController {
   @ApiResponse({ status: 200, description: 'Success retrived a data' })
   @ApiResponse({ status: 500, description: 'There is an error on server' })
   @UseInterceptors(ClassSerializerInterceptor)
+  @UseGuards(AuthGuard)
   async findById(
     @Param('id', MongoIdValidation) id: string,
+    @Req() req,
   ): Promise<ResponseWebSuccess> {
-    const result = await this.userService.findOneById(id);
+    const result = await this.userService.findOneById(
+      id,
+      req['user']['google'],
+    );
     if (!result) {
       throw new NotFoundException('No data found');
     }

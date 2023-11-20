@@ -33,16 +33,11 @@ export class UsersService {
     return result;
   }
 
-  async findOneById(id: string) {
-    let result;
-
-    result = this.userModel.findById(id);
-
-    if (!result) {
-      result = this.userAuth.findById(id);
+  async findOneById(id: string, isGoogleLogin: boolean) {
+    if (isGoogleLogin) {
+      return this.userAuth.findById(id);
     }
-
-    return result;
+    return this.userModel.findById(id);
   }
 
   async createOrFindUserGoogle(data: UserAuthGoogleDTO) {
