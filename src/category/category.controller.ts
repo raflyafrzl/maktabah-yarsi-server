@@ -39,7 +39,8 @@ import { AdminGuard } from 'src/guards/admin.guard';
 
 @Controller('api/v1/category')
 @ApiTags('Category')
-@ApiBearerAuth('access-token')
+//TODO: Undo Comment
+// @ApiBearerAuth('access-token')
 export class CategoryController {
   constructor(private categoryService: CategoryService) {}
 
@@ -63,6 +64,8 @@ export class CategoryController {
   @Get(':name')
   @ApiOperation({ summary: 'find a category base on the name' })
   @ApiResponse({ status: 200, description: 'success retrieved a data' })
+  @ApiResponse({ status: 400, description: 'no data found' })
+  @ApiResponse({ status: 500, description: 'internal server error' })
   @UseFilters(HttpExceptionFilter)
   async findOne(@Param('name') name: string): Promise<ResponseWebSuccess> {
     const result: Category | undefined = await this.categoryService.findOne(
@@ -89,7 +92,7 @@ export class CategoryController {
   @ApiOperation({ summary: 'Create a category' })
   @ApiResponse({ status: 201, description: 'success create a category' })
   @ApiResponse({ status: 400, description: 'Invalid payload provided' })
-  @ApiResponse({ status: 500, description: 'There is an error on server' })
+  @ApiResponse({ status: 500, description: 'internal server error' })
   async create(
     @Body(new JoiValidation(validationCategoryCreate))
     payload: CreateOrUpdateSubCategoryDTO | CreateOrUpdateCategoryDTO,
@@ -108,6 +111,7 @@ export class CategoryController {
 
   @ApiResponse({ status: 200, description: 'success delete a category' })
   @ApiResponse({ status: 400, description: 'Invalid id provided' })
+  @ApiResponse({ status: 500, description: 'internal server error' })
   @ApiOperation({ summary: 'Delete a category based on the id' })
   @Delete(':id')
   @UseFilters(MongoExceptionFilter)
@@ -130,6 +134,7 @@ export class CategoryController {
   @UseFilters(MongoExceptionFilter)
   @ApiResponse({ status: 200, description: 'success updated a category' })
   @ApiResponse({ status: 400, description: 'Invalid id provided' })
+  @ApiResponse({ status: 500, description: 'internal server error' })
   @ApiOperation({ summary: 'update a category' })
   async update(
     @Param('id', MongoIdValidation) id: string,
@@ -150,6 +155,7 @@ export class CategoryController {
     description: 'success retrieved subcategories by category id',
   })
   @ApiResponse({ status: 404, description: 'subcategories not found' })
+  @ApiResponse({ status: 500, description: 'internal server error' })
   @ApiOperation({ summary: 'retrieved subtegories ' })
   @Get('/sub/:id')
   @UseFilters(HttpExceptionFilter)

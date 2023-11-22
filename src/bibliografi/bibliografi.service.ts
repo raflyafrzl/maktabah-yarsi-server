@@ -50,7 +50,11 @@ export class BibliografiService {
     }
 
     if (query.sub_category) {
-      result = result.find({ subcategory_id: query.sub_category });
+      result = result.find({
+        subcategory_id: mongoose.Types.ObjectId.createFromHexString(
+          query.sub_category,
+        ),
+      });
       return result;
     }
 

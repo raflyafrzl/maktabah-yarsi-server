@@ -9,7 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { CategoryModule } from './category/category.module';
 import { BibliografiModule } from './bibliografi/bibliografi.module';
 import { VisitorModule } from './visitor/visitor.module';
-import { UsersService } from './users/users.service';
+import { ListcontentModule } from './listcontent/listcontent.module';
 
 @Module({
   imports: [
@@ -19,6 +19,7 @@ import { UsersService } from './users/users.service';
     CategoryModule,
     BibliografiModule,
     VisitorModule,
+    ListcontentModule,
   ],
   controllers: [AppController, AuthController],
   providers: [],
