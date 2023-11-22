@@ -23,6 +23,7 @@ import { MongoExceptionFilter } from 'src/exception/mongo-exception.filter';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { HttpExceptionFilter } from 'src/exception/http-exception.filter';
 import { UserGoogle } from 'src/schemas/user.schema';
+import CreateUserDTO from 'src/dto/user.dto';
 
 @Controller('api/v1/auth')
 @ApiTags('Auth')
@@ -107,9 +108,7 @@ export default class AuthController {
   @ApiResponse({ status: 400, description: 'invalid payload provided' })
   @UsePipes(new JoiValidation(validationCreateUser))
   @UseFilters(MongoExceptionFilter)
-  async register(
-    @Body() payload: CreateOrUpdateUserDTO,
-  ): Promise<ResponseWebSuccess> {
+  async register(@Body() payload: CreateUserDTO): Promise<ResponseWebSuccess> {
     const result = await this.authService.register(payload);
     const serializedResponse = new UserModelResponse(result);
     return {

@@ -5,10 +5,16 @@ import { Bibliography } from './bibliografi.schema';
 export type contentDocuemnt = HydratedDocument<ListContent>;
 
 export class ListContentHelper {
+  @Prop()
   page: number;
+
+  @Prop()
   name: string;
+
+  @Prop({ type: [ListContentHelper] })
   sub: ListContentHelper[];
 }
+@Schema()
 export class ListContent {
   @Prop({ required: true, unique: true })
   name: string;
@@ -19,7 +25,7 @@ export class ListContent {
   @Prop({ required: true, ref: Bibliography.name })
   bibliography: Bibliography;
 
-  @Prop({ required: true, type: [ListContentHelper] })
+  @Prop({ required: true })
   sub: ListContentHelper[];
 }
 export const ListOfContentSchema = SchemaFactory.createForClass(ListContent);

@@ -11,7 +11,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import CreateOrUpdateUserDTO, { validationUpdateUser } from '../dto/user.dto';
+import { UpdateUserDTO, validationUpdateUser } from '../dto/user.dto';
 import { JoiValidation } from 'src/pipes/validation.pipe';
 import { UsersService } from './users.service';
 import { User } from '../schemas/user.schema';
@@ -67,7 +67,7 @@ export class UsersController {
   @ApiResponse({ status: 500, description: 'There is an error server' })
   async update(
     @Body(new JoiValidation(validationUpdateUser))
-    payload: CreateOrUpdateUserDTO,
+    payload: UpdateUserDTO,
     @Param('id', MongoIdValidation) id: string,
   ): Promise<ResponseWebSuccess> {
     const result = await this.userService.update(id, payload);

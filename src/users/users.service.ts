@@ -2,8 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserGoogle } from '../schemas/user.schema';
 import { Model } from 'mongoose';
-import CreateOrUpdateUserDTO, { UserAuthGoogleDTO } from 'src/dto/user.dto';
+import { UpdateUserDTO, UserAuthGoogleDTO } from 'src/dto/user.dto';
+import CreateUserDTO from 'src/dto/user.dto';
 import * as bcrypt from 'bcryptjs';
+import { CustomClientException } from 'src/exception/custom.exception';
 @Injectable()
 export class UsersService {
   constructor(
@@ -15,7 +17,7 @@ export class UsersService {
     return this.userModel.find();
   }
 
-  async create(payload: CreateOrUpdateUserDTO) {
+  async create(payload: CreateUserDTO) {
     payload.password = await bcrypt.hash(payload.password, 10);
     return this.userModel.create({
       username: payload.username,
@@ -24,13 +26,33 @@ export class UsersService {
     });
   }
 
-  async update(id: string, payload: CreateOrUpdateUserDTO) {
-    const result = this.userModel.updateOne(
+  async update(id: string, payload: UpdateUserDTO) {
+    const result: User = await this.userModel.findById(id);
+
+    if (!result)
+      throw new CustomClientException('No data found', 400, 'BAD_REQUEST');
+
+    if (payload.old_password) {
+      const isMatch: boolean = await bcrypt.compare(
+        payload.password,
+        result.password,
+      );
+
+      if (!isMatch)
+        throw new CustomClientException(
+          'Invalid old password',
+          400,
+          'BAD_REQUEST',
+        );
+
+      payload.password = await bcrypt.hash(payload.password, 10);
+    }
+
+    return this.userModel.updateOne(
       { _id: id },
       { $set: payload },
       { new: true },
     );
-    return result;
   }
 
   async findOneById(id: string, isGoogleLogin: boolean) {
