@@ -69,24 +69,28 @@ export class QueryFindBibliografi {
   @ApiProperty({
     default: 'id dari bibliografi',
     type: String,
+    required: false,
     description: 'id of the bibliography',
   })
   id: string;
   @ApiProperty({
     default: 'createdAt',
     type: String,
+    required: false,
     description: 'field to sort the bibliography',
   })
   sort: string;
   @ApiProperty({
     default: 'Fiqih',
     type: String,
+    required: false,
     description: 'category name or category id',
   })
   category: string;
   @ApiProperty({
     default: 'Fiqih Jinayah',
     type: String,
+    required: false,
     description: 'sub category id or name',
   })
   sub_category: string;
@@ -113,16 +117,16 @@ export const validationCreateBibliografi: Joi.ObjectSchema<BibliografiCreateOrUp
     page: Joi.number().required(),
   });
 
-export const validationUpdateCategory: Joi.ObjectSchema<BibliografiCreateOrUpdateDTO> =
+export const validationUpdateBibliography: Joi.ObjectSchema<BibliografiCreateOrUpdateDTO> =
   Joi.object({
-    publisher: Joi.string().required(),
-    title: Joi.string().required(),
-    description: Joi.string().required(),
-    contributor: Joi.string().required(),
-    creator: Joi.string().required(),
-    source: Joi.string().required(),
-    image_url: Joi.string().required().uri(),
-    category: Joi.string().required(),
-    subcategory: Joi.string().required(),
-    page: Joi.number().required(),
+    publisher: Joi.string(),
+    title: Joi.string(),
+    description: Joi.string(),
+    contributor: Joi.string(),
+    creator: Joi.string(),
+    source: Joi.string(),
+    image_url: Joi.string().uri(),
+    category: Joi.string(),
+    subcategory: Joi.string(),
+    page: Joi.number(),
   });

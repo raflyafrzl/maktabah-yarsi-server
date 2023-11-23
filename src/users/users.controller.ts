@@ -22,6 +22,8 @@ import { AuthGuard } from 'src/guards/auth.guard';
 import { AdminGuard } from 'src/guards/admin.guard';
 import { HttpExceptionFilter } from 'src/exception/http-exception.filter';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { MongoExceptionFilter } from 'src/exception/mongo-exception.filter';
+import { Request } from 'express';
 
 @Controller('api/v1/users')
 @ApiTags('User')
@@ -39,6 +41,7 @@ export class UsersController {
   @UseFilters(HttpExceptionFilter)
   @ApiOperation({ summary: 'Get all data of users' })
   @ApiResponse({ status: 200, description: 'Success retrieved data' })
+  @ApiResponse({ status: 500, description: 'internal server error' })
   async find(): Promise<ResponseWebSuccess> {
     const result: User[] = await this.userService.findAll();
     return {
@@ -65,12 +68,26 @@ export class UsersController {
   })
   @ApiResponse({ status: 400, description: 'Invalid id provided' })
   @ApiResponse({ status: 500, description: 'There is an error server' })
+  @ApiParam({
+    description: 'id user',
+    name: 'id',
+    required: true,
+    type: String,
+  })
+  @UseFilters(MongoExceptionFilter)
+  @UseFilters(HttpExceptionFilter)
+  @UseGuards(AuthGuard)
   async update(
     @Body(new JoiValidation(validationUpdateUser))
     payload: UpdateUserDTO,
     @Param('id', MongoIdValidation) id: string,
+    @Req() req,
   ): Promise<ResponseWebSuccess> {
-    const result = await this.userService.update(id, payload);
+    const result = await this.userService.update(
+      id,
+      payload,
+      req['user']['google'],
+    );
     return {
       data: result,
       status: 'success',

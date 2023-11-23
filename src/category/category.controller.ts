@@ -44,7 +44,7 @@ import { AdminGuard } from 'src/guards/admin.guard';
 export class CategoryController {
   constructor(private categoryService: CategoryService) {}
 
-  @ApiOperation({ summary: 'get all of category' })
+  @ApiOperation({ summary: 'get all of categories' })
   @Get('/')
   @ApiResponse({
     status: 200,

@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 import { Bibliography } from './bibliografi.schema';
 
 export type contentDocuemnt = HydratedDocument<ListContent>;
@@ -14,7 +14,7 @@ export class ListContentHelper {
   @Prop({ type: [ListContentHelper] })
   sub: ListContentHelper[];
 }
-@Schema()
+@Schema({ versionKey: false })
 export class ListContent {
   @Prop({ required: true, unique: true })
   name: string;
@@ -22,7 +22,7 @@ export class ListContent {
   @Prop({ required: true, default: 0 })
   page: number;
 
-  @Prop({ required: true, ref: Bibliography.name })
+  @Prop({ required: true, ref: Bibliography.name, type: Types.ObjectId })
   bibliography: Bibliography;
 
   @Prop({ required: true })

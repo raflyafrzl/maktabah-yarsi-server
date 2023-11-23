@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -17,7 +18,13 @@ import {
   validationCreateBibliografi,
   validationQueryFindBibliografi,
 } from 'src/dto/bibliografi.dto';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { HttpExceptionFilter } from 'src/exception/http-exception.filter';
 import { MongoExceptionFilter } from 'src/exception/mongo-exception.filter';
 import { MongoIdValidation } from 'src/pipes/mongoid.validation';
@@ -29,6 +36,10 @@ export class BibliografiController {
 
   @Get('/')
   @UseFilters(HttpExceptionFilter)
+  @ApiQuery({ type: QueryFindBibliografi, required: false })
+  @ApiOperation({ summary: 'get all/specific bibliografi based on query' })
+  @ApiResponse({ status: 201, description: 'success retrieved a bibliografi' })
+  @ApiResponse({ status: 500, description: 'There is an error on server' })
   async get(
     @Query(new JoiValidation(validationQueryFindBibliografi))
     query: QueryFindBibliografi,
@@ -64,6 +75,12 @@ export class BibliografiController {
   @Patch('/:id')
   @UseFilters(HttpExceptionFilter)
   @UseFilters(MongoExceptionFilter)
+  @ApiOperation({ summary: 'update total view bibliography' })
+  @ApiResponse({
+    status: 200,
+    description: 'successfully updated bibliography view',
+  })
+  @ApiResponse({ status: 500, description: 'internal server error' })
   async updateViews(
     @Param('id', MongoIdValidation) id: string,
   ): Promise<ResponseWebSuccess> {
@@ -72,6 +89,29 @@ export class BibliografiController {
     return {
       data: result,
       message: 'success updating a view',
+      status: 'success',
+      statusCode: 200,
+    };
+  }
+
+  @Delete('/:id')
+  @UseFilters(HttpExceptionFilter)
+  @UseFilters(MongoExceptionFilter)
+  @ApiParam({
+    name: 'id',
+    description: 'id of bibliography',
+    type: String,
+    required: true,
+  })
+  @ApiOperation({ summary: 'deleted bibliography based on the id' })
+  async delete(
+    @Param('id', MongoIdValidation) id: string,
+  ): Promise<ResponseWebSuccess> {
+    await this.biblioService.deleteOne(id);
+
+    return {
+      data: id,
+      message: 'successfully deleted a bibliography',
       status: 'success',
       statusCode: 200,
     };

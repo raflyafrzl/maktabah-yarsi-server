@@ -34,7 +34,7 @@ export class BibliografiService {
       const sortBy = query.sort.split(',').join(' ');
       result = result.sort(sortBy).limit(6).skip(0);
     }
-    let res;
+    let res: Category;
     if (query.category) {
       if (!mongoose.Types.ObjectId.isValid(query.category)) {
         res = await this.categoryService.findOne(query.category);
@@ -107,5 +107,28 @@ export class BibliografiService {
       { _id: result._id },
       { $set: { total: result.total + 1 } },
     );
+  }
+
+  async deleteOne(id: string) {
+    const result: Bibliography = await this.bibliografi.findById(id);
+
+    if (!result)
+      throw new CustomClientException('No data found', 404, 'NOT_FOUND');
+    this.bibliografi.deleteOne({ _id: id });
+  }
+
+  async updateOne(id: string, payload: BibliografiCreateOrUpdateDTO) {
+    const result: Bibliography = await this.bibliografi.findById(id);
+
+    if (!result)
+      throw new CustomClientException(
+        'no bibliography found',
+        404,
+        'NOT_FOUND',
+      );
+
+    return this.bibliografi
+      .updateOne({ _id: id }, { $set: payload }, { new: true })
+      .lean();
   }
 }

@@ -26,15 +26,26 @@ export class UsersService {
     });
   }
 
-  async update(id: string, payload: UpdateUserDTO) {
+  async update(id: string, payload: UpdateUserDTO, google: boolean) {
+    if (google) {
+      const result: UserGoogle = await this.userAuth.findById(id);
+
+      if (!result)
+        throw new CustomClientException('no data found', 400, 'BAD_REQUEST');
+
+      return this.userAuth.updateOne(
+        { _id: id },
+        { $set: payload },
+        { new: true },
+      );
+    }
     const result: User = await this.userModel.findById(id);
 
     if (!result)
       throw new CustomClientException('No data found', 400, 'BAD_REQUEST');
-
     if (payload.old_password) {
       const isMatch: boolean = await bcrypt.compare(
-        payload.password,
+        payload.old_password,
         result.password,
       );
 
@@ -48,11 +59,9 @@ export class UsersService {
       payload.password = await bcrypt.hash(payload.password, 10);
     }
 
-    return this.userModel.updateOne(
-      { _id: id },
-      { $set: payload },
-      { new: true },
-    );
+    return this.userModel
+      .updateOne({ _id: id }, { $set: payload }, { new: true })
+      .lean();
   }
 
   async findOneById(id: string, isGoogleLogin: boolean) {
