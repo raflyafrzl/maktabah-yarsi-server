@@ -15,11 +15,7 @@ export class CategoryService {
   constructor(@InjectModel(Category.name) private category: Model<Category>) {}
 
   async find() {
-    const result = this.category.find({ name: 'Akhlak tiga' }).populate({
-      path: 'category',
-      populate: { path: 'category' },
-    });
-    return result;
+    return this.category.find({});
   }
 
   async findOne(name: string) {
