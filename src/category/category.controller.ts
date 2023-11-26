@@ -36,6 +36,7 @@ import { CustomClientException } from 'src/exception/custom.exception';
 import { HttpExceptionFilter } from 'src/exception/http-exception.filter';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { AdminGuard } from 'src/guards/admin.guard';
+import { buildCategoryTree } from 'src/utils/format-category';
 
 @Controller('api/v1/category')
 @ApiTags('Category')
@@ -56,7 +57,7 @@ export class CategoryController {
     return {
       statusCode: 200,
       status: 'success',
-      data: result,
+      data: buildCategoryTree(result),
       message: 'Data has been successfully retrieved',
     };
   }
