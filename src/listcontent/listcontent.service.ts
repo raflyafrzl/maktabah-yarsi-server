@@ -46,7 +46,7 @@ export class ListcontentService {
         'NOT_FOUND',
       );
 
-    if (mongoose.Types.ObjectId.isValid(id))
+    if (!mongoose.Types.ObjectId.isValid(id))
       throw new CustomClientException(
         'Invalid id provided',
         400,
