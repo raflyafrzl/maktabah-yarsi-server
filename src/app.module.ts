@@ -10,6 +10,7 @@ import { CategoryModule } from './category/category.module';
 import { BibliografiModule } from './bibliografi/bibliografi.module';
 import { VisitorModule } from './visitor/visitor.module';
 import { ListcontentModule } from './listcontent/listcontent.module';
+import { ContentModule } from './content/content.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { ListcontentModule } from './listcontent/listcontent.module';
     BibliografiModule,
     VisitorModule,
     ListcontentModule,
+    ContentModule,
   ],
   controllers: [AppController, AuthController],
   providers: [],

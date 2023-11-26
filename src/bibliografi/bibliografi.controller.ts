@@ -62,7 +62,7 @@ export class BibliografiController {
     @Body(new JoiValidation(validationCreateBibliografi))
     payload: BibliografiCreateOrUpdateDTO,
   ): Promise<ResponseWebSuccess> {
-    await this.biblioService.create(payload);
+    // await this.biblioService.create(payload);
 
     return {
       data: payload,

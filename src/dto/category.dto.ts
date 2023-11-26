@@ -14,6 +14,13 @@ export class CreateOrUpdateCategoryDTO {
     default: 0,
   })
   total?: number | undefined;
+
+  @ApiProperty({
+    type: String,
+    description: 'parent of the category',
+    default: null,
+  })
+  category: string;
 }
 
 export class CreateOrUpdateSubCategoryDTO {
@@ -38,6 +45,7 @@ export const validationCategoryCreate: Joi.ObjectSchema<
   CreateOrUpdateCategoryDTO | CreateOrUpdateSubCategoryDTO
 > = Joi.object({
   id: Joi.string(),
+  category: Joi.string(),
   name: Joi.string().required(),
 });
 

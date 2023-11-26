@@ -49,7 +49,7 @@ export class ListcontentService {
     return this.listContent.findOne({ bibliography: id });
   }
 
-  async updateOne(id: string, payload: CreateOrUpdateCategoryDTO) {
+  async updateOne(id: string, payload: CreateOrListContentDTO) {
     const data: ListContent = await this.listContent.findById(id);
 
     if (!data)

@@ -9,7 +9,7 @@ import {
 import { CreateOrUpdateCategoryDTO } from 'src/dto/category.dto';
 import { CustomClientException } from 'src/exception/custom.exception';
 import { Bibliography } from 'src/schemas/bibliografi.schema';
-import { Category, SubCategory } from 'src/schemas/category.schema';
+import { Category } from 'src/schemas/category.schema';
 
 @Injectable()
 export class BibliografiService {
@@ -61,45 +61,45 @@ export class BibliografiService {
     return result;
   }
 
-  async create(payload: BibliografiCreateOrUpdateDTO) {
-    const result: Category = await this.categoryService.findOne(
-      payload.category,
-    );
-    if (!result)
-      throw new CustomClientException('No Category Found', 400, 'BAD_REQUEST');
+  // async create(payload: BibliografiCreateOrUpdateDTO) {
+  //   const result: Category = await this.categoryService.findOne(
+  //     payload.category,
+  //   );
+  //   if (!result)
+  //     throw new CustomClientException('No Category Found', 400, 'BAD_REQUEST');
 
-    const id: string = result['_id'].toString();
-    const categoryUpdate: CreateOrUpdateCategoryDTO = {
-      total: 1,
-      name: result.name,
-    };
+  //   const id: string = result['_id'].toString();
+  //   const categoryUpdate: CreateOrUpdateCategoryDTO = {
+  //     total: 1,
+  //     name: result.name,
+  //   };
 
-    this.categoryService.updateOne(id, categoryUpdate);
+  //   this.categoryService.updateOne(id, categoryUpdate);
 
-    const resultSub: SubCategory = await this.categoryService.findOneSubByName(
-      payload.subcategory,
-    );
+  //   const resultSub: SubCategory = await this.categoryService.findOneSubByName(
+  //     payload.subcategory,
+  //   );
 
-    if (!resultSub)
-      throw new CustomClientException('No Category Found', 400, 'BAD_REQUEST');
+  //   if (!resultSub)
+  //     throw new CustomClientException('No Category Found', 400, 'BAD_REQUEST');
 
-    this.categoryService.updateSubCategory({
-      name: resultSub.name,
-      total: 1,
-    });
-    this.bibliografi.create({
-      title: payload.title,
-      contributor: payload.contributor,
-      source: payload.source,
-      category_id: mongoose.Types.ObjectId.createFromHexString(id),
-      subcategory_id: resultSub['_id'],
-      image_url: payload.image_url,
-      description: payload.description,
-      publisher: payload.publisher,
-      creator: payload.creator,
-      page: payload.page,
-    });
-  }
+  //   this.categoryService.updateSubCategory({
+  //     name: resultSub.name,
+  //     total: 1,
+  //   });
+  //   this.bibliografi.create({
+  //     title: payload.title,
+  //     contributor: payload.contributor,
+  //     source: payload.source,
+  //     category_id: mongoose.Types.ObjectId.createFromHexString(id),
+  //     subcategory_id: resultSub['_id'],
+  //     image_url: payload.image_url,
+  //     description: payload.description,
+  //     publisher: payload.publisher,
+  //     creator: payload.creator,
+  //     page: payload.page,
+  //   });
+  // }
   async updateViews(id: string) {
     const result = await this.bibliografi.findOne({ _id: id });
 
