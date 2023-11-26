@@ -46,7 +46,15 @@ export class ListcontentService {
         'NOT_FOUND',
       );
 
-    return this.listContent.findOne({ bibliography: id });
+    if (mongoose.Types.ObjectId.isValid(id))
+      throw new CustomClientException(
+        'Invalid id provided',
+        400,
+        'BAD_REQUEST',
+      );
+    return this.listContent.findOne({
+      bibliography: mongoose.Types.ObjectId.createFromHexString(id),
+    });
   }
 
   async updateOne(id: string, payload: CreateOrUpdateCategoryDTO) {
