@@ -14,7 +14,7 @@ import { ContentModule } from './content/content.module';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://127.0.0.1:27017'),
+    MongooseModule.forRoot(process.env.MONGODB_URL),
     UsersModule,
     AuthModule,
     CategoryModule,
