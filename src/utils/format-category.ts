@@ -3,35 +3,34 @@ import { Category } from 'src/schemas/category.schema';
 type SubCategories = {
   id: string;
   name: string;
-  total: number;
   subcategories?: SubCategories[] | null;
 };
 
 export const buildCategoryTree = (categories: Category[]): SubCategories[] => {
-  const mapCat = new Map<string, any>();
-  categories.forEach((category) => {
-    mapCat.set(category['_id'].toString(), {
-      id: category['_id'].toString(),
-      name: category.name,
-      total: category.total,
-      subcategories: [],
-    });
-  });
+  const mapCat = new Map<string, SubCategories>();
+  const tree: SubCategories[] = [];
 
-  for (const category of categories) {
+  categories.forEach((category) => {
+    const categoryId = category['_id'].toString();
     const parentId = category.category ? category.category.toString() : null;
-    if (parentId) {
-      const parentCategorySub: SubCategories = mapCat.get(parentId);
-      if (parentCategorySub) {
-        const ChildCategorySub: SubCategories = mapCat.get(
-          category['_id'].toString(),
-        );
-        if (ChildCategorySub) {
-          parentCategorySub.subcategories.push(ChildCategorySub);
-        }
+
+    const currentCategory: SubCategories = {
+      id: categoryId,
+      name: category.name,
+      subcategories: [],
+    };
+
+    mapCat.set(categoryId, currentCategory);
+
+    if (!parentId) {
+      tree.push(currentCategory);
+    } else {
+      const parentCategory = mapCat.get(parentId);
+      if (parentCategory) {
+        parentCategory.subcategories.push(currentCategory);
       }
     }
-  }
+  });
 
-  return Array.from(mapCat.values());
+  return tree;
 };

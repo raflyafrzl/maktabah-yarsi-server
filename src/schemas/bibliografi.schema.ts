@@ -29,9 +29,6 @@ export class Bibliography {
   @Prop()
   publisher: string;
 
-  @Prop({ type: Date, default: Date.now() })
-  date_created: Date;
-
   @Prop()
   source: string;
 
@@ -44,9 +41,6 @@ export class Bibliography {
 
   @Prop({ type: Types.ObjectId, ref: Category.name })
   category_id: Category;
-
-  // @Prop({ type: Types.ObjectId, ref: SubCategory.name })
-  // subcategory_id: SubCategory;
 
   @Prop({ default: now() })
   createdAt: Date;
@@ -65,9 +59,3 @@ BiblioSchema.virtual('category', {
   localField: 'category_id',
   foreignField: '_id',
 });
-
-// BiblioSchema.virtual('sub_category', {
-//   ref: SubCategory.name,
-//   localField: 'subcategory_id',
-//   foreignField: '_id',
-// });

@@ -19,10 +19,7 @@ export class BibliografiService {
   ) {}
 
   async find(query: QueryFindBibliografi) {
-    let result = this.bibliografi
-      .find()
-      .populate('category')
-      .populate('sub_category');
+    let result = this.bibliografi.find().populate('category');
     if (query.id) {
       result = result.find({
         _id: mongoose.Types.ObjectId.createFromHexString(query.id),
@@ -49,61 +46,45 @@ export class BibliografiService {
       return result;
     }
 
-    if (query.sub_category) {
-      result = result.find({
-        subcategory_id: mongoose.Types.ObjectId.createFromHexString(
-          query.sub_category,
-        ),
-      });
-      return result;
-    }
+    return result;
+  }
+
+  async findById(id: string) {
+    const result: Bibliography = await this.bibliografi.findById(id);
+
+    if (!result)
+      throw new CustomClientException('no data found', 404, 'BAD_REQUEST');
 
     return result;
   }
 
-  // async create(payload: BibliografiCreateOrUpdateDTO) {
-  //   const result: Category = await this.categoryService.findOne(
-  //     payload.category,
-  //   );
-  //   if (!result)
-  //     throw new CustomClientException('No Category Found', 400, 'BAD_REQUEST');
+  async create(payload: BibliografiCreateOrUpdateDTO) {
+    const result: Category = await this.categoryService.findOne(
+      payload.category,
+    );
 
-  //   const id: string = result['_id'].toString();
-  //   const categoryUpdate: CreateOrUpdateCategoryDTO = {
-  //     total: 1,
-  //     name: result.name,
-  //   };
+    if (!result)
+      throw new CustomClientException('category not found', 404, 'NOT_FOUND');
 
-  //   this.categoryService.updateOne(id, categoryUpdate);
+    const category_id: string = result['_id'].toString();
 
-  //   const resultSub: SubCategory = await this.categoryService.findOneSubByName(
-  //     payload.subcategory,
-  //   );
+    await this.bibliografi.create({
+      image_url: payload.image_url,
+      category_id: mongoose.Types.ObjectId.createFromHexString(category_id),
+      description: payload.description,
+      publisher: payload.publisher,
+      creator: payload.creator,
+      page: payload.page,
+      title: payload.title,
+      contributor: payload.contributor,
+      source: payload.source,
+    });
+  }
 
-  //   if (!resultSub)
-  //     throw new CustomClientException('No Category Found', 400, 'BAD_REQUEST');
-
-  //   this.categoryService.updateSubCategory({
-  //     name: resultSub.name,
-  //     total: 1,
-  //   });
-  //   this.bibliografi.create({
-  //     title: payload.title,
-  //     contributor: payload.contributor,
-  //     source: payload.source,
-  //     category_id: mongoose.Types.ObjectId.createFromHexString(id),
-  //     subcategory_id: resultSub['_id'],
-  //     image_url: payload.image_url,
-  //     description: payload.description,
-  //     publisher: payload.publisher,
-  //     creator: payload.creator,
-  //     page: payload.page,
-  //   });
-  // }
   async updateViews(id: string) {
     const result = await this.bibliografi.findOne({ _id: id });
 
-    return this.bibliografi.updateOne(
+    return await this.bibliografi.updateOne(
       { _id: result._id },
       { $set: { total: result.total + 1 } },
     );

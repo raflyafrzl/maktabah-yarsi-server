@@ -16,7 +16,7 @@ export class ListContentHelper {
 }
 @Schema({ versionKey: false })
 export class ListContent {
-  @Prop({ required: true, unique: true })
+  @Prop({ required: true })
   name: string;
 
   @Prop({ required: true, default: 0 })

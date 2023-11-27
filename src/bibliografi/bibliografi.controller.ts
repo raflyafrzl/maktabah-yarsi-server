@@ -28,6 +28,7 @@ import {
 import { HttpExceptionFilter } from 'src/exception/http-exception.filter';
 import { MongoExceptionFilter } from 'src/exception/mongo-exception.filter';
 import { MongoIdValidation } from 'src/pipes/mongoid.validation';
+import { Bibliography } from 'src/schemas/bibliografi.schema';
 
 @ApiTags('bibliografi')
 @Controller('api/v1/bibliografi')
@@ -52,18 +53,32 @@ export class BibliografiController {
       message: 'Data has beeen succesfully retrieved',
     };
   }
+
+  @Get('/:id')
+  @UseFilters(HttpExceptionFilter)
+  async getById(
+    @Param('id', MongoIdValidation) id: string,
+  ): Promise<ResponseWebSuccess> {
+    const result: Bibliography = await this.biblioService.findById(id);
+
+    return {
+      data: result,
+      message: 'successfully retrived a bibliography',
+      status: 'success',
+      statusCode: 200,
+    };
+  }
+  @UseFilters(HttpExceptionFilter, MongoExceptionFilter)
   @ApiOperation({ summary: 'Create a bibliografi' })
   @ApiResponse({ status: 201, description: 'success create a bibliografi' })
   @ApiResponse({ status: 400, description: 'Invalid payload provided' })
   @ApiResponse({ status: 500, description: 'There is an error on server' })
-  @UseFilters(HttpExceptionFilter)
   @Post('/')
   async create(
     @Body(new JoiValidation(validationCreateBibliografi))
     payload: BibliografiCreateOrUpdateDTO,
   ): Promise<ResponseWebSuccess> {
-    // await this.biblioService.create(payload);
-
+    await this.biblioService.create(payload);
     return {
       data: payload,
       message: 'Book has been successfully created',
@@ -73,8 +88,7 @@ export class BibliografiController {
   }
 
   @Patch('/:id')
-  @UseFilters(HttpExceptionFilter)
-  @UseFilters(MongoExceptionFilter)
+  @UseFilters(HttpExceptionFilter, MongoExceptionFilter)
   @ApiOperation({ summary: 'update total view bibliography' })
   @ApiResponse({
     status: 200,

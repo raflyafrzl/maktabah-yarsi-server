@@ -18,8 +18,6 @@ import { Category } from 'src/schemas/category.schema';
 import { JoiValidation } from 'src/pipes/validation.pipe';
 import {
   CreateOrUpdateCategoryDTO,
-  CreateOrUpdateSubCategoryDTO,
-  QueryParamCategoryDTO,
   validationCategoryCreate,
   validationQueryCategory,
   validationUpdateCategory,
@@ -51,6 +49,7 @@ export class CategoryController {
     status: 200,
     description: 'Category has been retrieved successfully',
   })
+  @UseFilters(HttpExceptionFilter)
   @ApiResponse({ status: 500, description: 'There is an error on server' })
   async get(): Promise<ResponseWebSuccess> {
     const result: Category[] = await this.categoryService.find();
@@ -87,8 +86,7 @@ export class CategoryController {
   @Post('/')
   //TODO:uncomment Guards
   // @UseGuards(AuthGuard, AdminGuard)
-  @UseFilters(HttpExceptionFilter)
-  @UseFilters(MongoExceptionFilter)
+  @UseFilters(HttpExceptionFilter, MongoExceptionFilter)
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Create a category' })
   @ApiResponse({ status: 201, description: 'success create a category' })
@@ -108,65 +106,45 @@ export class CategoryController {
     };
   }
 
-  // @ApiResponse({ status: 200, description: 'success delete a category' })
-  // @ApiResponse({ status: 400, description: 'Invalid id provided' })
-  // @ApiResponse({ status: 500, description: 'internal server error' })
-  // @ApiOperation({ summary: 'Delete a category based on the id' })
-  // @Delete(':id')
-  // @UseFilters(MongoExceptionFilter)
-  // @UseGuards(AuthGuard, AdminGuard)
-  // async delete(
-  //   @Param('id', MongoIdValidation) id: string,
-  // ): Promise<ResponseWebSuccess> {
-  //   await this.categoryService.deleteOne(id);
+  @ApiResponse({ status: 200, description: 'success delete a category' })
+  @ApiResponse({ status: 400, description: 'Invalid id provided' })
+  @ApiResponse({ status: 500, description: 'internal server error' })
+  @ApiOperation({ summary: 'Delete a category based on the id' })
+  @Delete(':id')
+  @UseFilters(HttpExceptionFilter, MongoExceptionFilter)
+  @UseGuards(AuthGuard, AdminGuard)
+  async delete(
+    @Param('id', MongoIdValidation) id: string,
+  ): Promise<ResponseWebSuccess> {
+    await this.categoryService.delete(id);
 
-  //   return {
-  //     data: `${id}`,
-  //     message: 'A category has been successfully deleted',
-  //     status: 'success',
-  //     statusCode: 200,
-  //   };
-  // }
+    return {
+      data: `${id}`,
+      message: 'A category has been successfully deleted',
+      status: 'success',
+      statusCode: 200,
+    };
+  }
 
-  // @Patch(':id')
-  // @UseGuards(AuthGuard, AdminGuard)
-  // @UseFilters(MongoExceptionFilter)
-  // @ApiResponse({ status: 200, description: 'success updated a category' })
-  // @ApiResponse({ status: 400, description: 'Invalid id provided' })
-  // @ApiResponse({ status: 500, description: 'internal server error' })
-  // @ApiOperation({ summary: 'update a category' })
-  // async update(
-  //   @Param('id', MongoIdValidation) id: string,
-  //   @Body(new JoiValidation(validationUpdateCategory))
-  //   payload: CreateOrUpdateCategoryDTO,
-  // ): Promise<ResponseWebSuccess> {
-  //   const result = await this.categoryService.updateOne(id, payload);
-  //   return {
-  //     data: result,
-  //     status: 'success',
-  //     statusCode: 200,
-  //     message: 'A category has been succesfully updated',
-  //   };
-  // }
-
-  // @ApiResponse({
-  //   status: 200,
-  //   description: 'success retrieved subcategories by category id',
-  // })
-  // @ApiResponse({ status: 404, description: 'subcategories not found' })
-  // @ApiResponse({ status: 500, description: 'internal server error' })
-  // @ApiOperation({ summary: 'retrieved subtegories ' })
-  // @Get('/sub/:id')
-  // @UseFilters(HttpExceptionFilter)
-  // async getSubById(
-  //   @Param('id', MongoIdValidation) id: string,
-  // ): Promise<ResponseWebSuccess> {
-  //   const result = await this.categoryService.findSubByCategoryId(id);
-  //   return {
-  //     data: result,
-  //     message: 'A sub category has been succesfully retrieved',
-  //     status: 'success',
-  //     statusCode: 200,
-  //   };
-  // }
+  @Patch(':id')
+  @UseGuards(AuthGuard, AdminGuard)
+  @UseFilters(MongoExceptionFilter)
+  @UseFilters(HttpExceptionFilter)
+  @ApiResponse({ status: 200, description: 'success updated a category' })
+  @ApiResponse({ status: 400, description: 'Invalid id provided' })
+  @ApiResponse({ status: 500, description: 'internal server error' })
+  @ApiOperation({ summary: 'update a category' })
+  async update(
+    @Param('id', MongoIdValidation) id: string,
+    @Body(new JoiValidation(validationUpdateCategory))
+    payload: CreateOrUpdateCategoryDTO,
+  ): Promise<ResponseWebSuccess> {
+    const result = await this.categoryService.update(id, payload);
+    return {
+      data: result,
+      status: 'success',
+      statusCode: 200,
+      message: 'A category has been succesfully updated',
+    };
+  }
 }

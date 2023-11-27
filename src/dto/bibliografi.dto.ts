@@ -52,17 +52,11 @@ export class BibliografiCreateOrUpdateDTO {
   })
   category: string;
   @ApiProperty({
-    default: 'iasdjadjajxxj',
-    type: String,
-    description: 'subcategory of the bibliografi',
-  })
-  subcategory: string;
-  @ApiProperty({
-    default: 124,
+    default: 100,
     type: Number,
-    description: 'total page of the bibliografi',
+    description: 'total page of the bibliography',
   })
-  page: string;
+  page: number;
 }
 
 export class QueryFindBibliografi {
@@ -113,7 +107,6 @@ export const validationCreateBibliografi: Joi.ObjectSchema<BibliografiCreateOrUp
     source: Joi.string().required(),
     image_url: Joi.string().required().uri(),
     category: Joi.string().required(),
-    subcategory: Joi.string().required(),
     page: Joi.number().required(),
   });
 
@@ -127,6 +120,5 @@ export const validationUpdateBibliography: Joi.ObjectSchema<BibliografiCreateOrU
     source: Joi.string(),
     image_url: Joi.string().uri(),
     category: Joi.string(),
-    subcategory: Joi.string(),
     page: Joi.number(),
   });

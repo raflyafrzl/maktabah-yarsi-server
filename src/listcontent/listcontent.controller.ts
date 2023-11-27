@@ -29,7 +29,7 @@ import { MongoExceptionFilter } from 'src/exception/mongo-exception.filter';
 export class ListcontentController {
   constructor(private listContentService: ListcontentService) {}
 
-  @UseFilters(HttpExceptionFilter)
+  @UseFilters(HttpExceptionFilter, MongoExceptionFilter)
   @HttpCode(HttpStatus.CREATED)
   @Post('/')
   @ApiOperation({ summary: 'create list of content' })

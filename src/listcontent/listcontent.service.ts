@@ -16,6 +16,13 @@ export class ListcontentService {
   ) {}
 
   async create(payload: CreateOrListContentDTO) {
+    if (!mongoose.Types.ObjectId.isValid(payload.bibliography))
+      throw new CustomClientException(
+        'invalid bibliography id',
+        400,
+        'BAD_REQUEST',
+      );
+
     const result = await this.bibliography.findById(payload.bibliography);
 
     if (!result) {
@@ -26,7 +33,7 @@ export class ListcontentService {
       );
     }
 
-    return this.listContent.create({
+    return await this.listContent.create({
       page: payload.page,
       bibliography: mongoose.Types.ObjectId.createFromHexString(
         payload.bibliography,

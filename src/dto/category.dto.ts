@@ -23,31 +23,16 @@ export class CreateOrUpdateCategoryDTO {
   category: string;
 }
 
-export class CreateOrUpdateSubCategoryDTO {
-  @ApiProperty({
-    type: String,
-    description: 'name of sub category',
-    default: 'Fiqih',
-  })
-  name: string;
-  @ApiProperty({
-    type: String,
-    description: 'id of category',
-    default: 'valid id category',
-  })
-  id: string;
-}
 export class QueryParamCategoryDTO {
   result: string;
 }
 
-export const validationCategoryCreate: Joi.ObjectSchema<
-  CreateOrUpdateCategoryDTO | CreateOrUpdateSubCategoryDTO
-> = Joi.object({
-  id: Joi.string(),
-  category: Joi.string(),
-  name: Joi.string().required(),
-});
+export const validationCategoryCreate: Joi.ObjectSchema<CreateOrUpdateCategoryDTO> =
+  Joi.object({
+    id: Joi.string(),
+    category: Joi.string(),
+    name: Joi.string().required(),
+  });
 
 export const validationUpdateCategory: Joi.ObjectSchema<CreateOrUpdateCategoryDTO> =
   Joi.object({
