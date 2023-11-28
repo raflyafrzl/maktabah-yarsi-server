@@ -130,4 +130,20 @@ export class BibliografiController {
       statusCode: 200,
     };
   }
+  @Get('categories/:id')
+  @UseFilters(HttpExceptionFilter)
+  async getByCategoryId(
+    @Param('id', MongoIdValidation) id: string,
+  ): Promise<ResponseWebSuccess> {
+    const result: Bibliography[] = await this.biblioService.findByCategoryId(
+      id,
+    );
+
+    return {
+      data: result,
+      message: 'successfully retrived a bibliography',
+      status: 'success',
+      statusCode: 200,
+    };
+  }
 }

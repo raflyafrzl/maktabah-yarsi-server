@@ -112,4 +112,16 @@ export class BibliografiService {
       .updateOne({ _id: id }, { $set: payload }, { new: true })
       .lean();
   }
+  async findByCategoryId(id: string) {
+    const category: Category = await this.categoryService.findById(id);
+
+    if (!category)
+      throw new CustomClientException('no data found', 404, 'BAD_REQUEST');
+
+    const result = this.bibliografi.find({
+      category_id: mongoose.Types.ObjectId.createFromHexString(id),
+    });
+
+    return result;
+  }
 }

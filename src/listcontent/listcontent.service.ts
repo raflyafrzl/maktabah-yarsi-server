@@ -33,6 +33,19 @@ export class ListcontentService {
       );
     }
 
+    const isAlreadyCreated = await this.listContent.findOne({
+      bibliography: mongoose.Types.ObjectId.createFromHexString(
+        payload.bibliography,
+      ),
+    });
+
+    if (isAlreadyCreated)
+      throw new CustomClientException(
+        'this bibliography already has list content',
+        400,
+        'BAD_REQUEST',
+      );
+
     return await this.listContent.create({
       page: payload.page,
       bibliography: mongoose.Types.ObjectId.createFromHexString(
@@ -53,7 +66,9 @@ export class ListcontentService {
         'NOT_FOUND',
       );
 
-    return this.listContent.findOne({ bibliography: id });
+    return this.listContent.findOne({
+      bibliography: mongoose.Types.ObjectId.createFromHexString(id),
+    });
   }
 
   async updateOne(id: string, payload: CreateOrListContentDTO) {
@@ -67,7 +82,11 @@ export class ListcontentService {
       );
 
     const result = this.listContent
-      .updateOne({ _id: id }, { $set: payload }, { new: true })
+      .updateOne(
+        { _id: mongoose.Types.ObjectId.createFromHexString(id) },
+        { $set: payload },
+        { new: true },
+      )
       .lean();
 
     return result;
@@ -79,6 +98,8 @@ export class ListcontentService {
     if (!result)
       throw new CustomClientException('no list of found', 404, 'NOT_FOUND');
 
-    this.listContent.deleteOne({ _id: id });
+    this.listContent.deleteOne({
+      _id: mongoose.Types.ObjectId.createFromHexString(id),
+    });
   }
 }

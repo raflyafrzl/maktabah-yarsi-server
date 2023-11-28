@@ -71,4 +71,10 @@ export class CategoryService {
       _id: mongoose.Types.ObjectId.createFromHexString(id),
     });
   }
+
+  async findById(id: string) {
+    const result = this.category.findById(id);
+
+    return result;
+  }
 }
