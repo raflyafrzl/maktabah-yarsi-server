@@ -30,7 +30,7 @@ import { MongoExceptionFilter } from 'src/exception/mongo-exception.filter';
 import { MongoIdValidation } from 'src/pipes/mongoid.validation';
 
 @ApiTags('bibliografi')
-@Controller('api/v1/bibliografi')
+@Controller('api/v1/bibliographies')
 export class BibliografiController {
   constructor(private biblioService: BibliografiService) {}
 
@@ -38,7 +38,7 @@ export class BibliografiController {
   @UseFilters(HttpExceptionFilter)
   @ApiQuery({ type: QueryFindBibliografi, required: false })
   @ApiOperation({ summary: 'get all/specific bibliografi based on query' })
-  @ApiResponse({ status: 201, description: 'success retrieved a bibliografi' })
+  @ApiResponse({ status: 200, description: 'success retrieved a bibliografi' })
   @ApiResponse({ status: 500, description: 'There is an error on server' })
   async get(
     @Query(new JoiValidation(validationQueryFindBibliografi))
@@ -112,6 +112,64 @@ export class BibliografiController {
     return {
       data: id,
       message: 'successfully deleted a bibliography',
+      status: 'success',
+      statusCode: 200,
+    };
+  }
+
+  @Get('/category/:id')
+  @UseFilters(HttpExceptionFilter)
+  @ApiOperation({ summary: 'get a bibliography by category id' })
+  @ApiResponse({
+    status: 200,
+    description: 'successfully retrieved  bibliographies',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'invalid id parameter',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'no data found',
+  })
+  @ApiResponse({ status: 500, description: 'internal server error' })
+  async getBibliographiesByCategoryId(
+    @Param('id', MongoIdValidation) id: string,
+  ): Promise<ResponseWebSuccess> {
+    const result = await this.biblioService.findByCategoryId(id);
+
+    return {
+      data: result,
+      message: 'success retrieved bibliographies by category id',
+      status: 'success',
+      statusCode: 200,
+    };
+  }
+
+  @Get('/:id')
+  @UseFilters(HttpExceptionFilter)
+  @ApiOperation({ summary: 'get a bibliography by id' })
+  @ApiResponse({
+    status: 200,
+    description: 'successfully retrieved a bibliography',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'invalid id parameter',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'no data found',
+  })
+  @ApiResponse({ status: 500, description: 'internal server error' })
+  async getById(
+    @Param('id', MongoIdValidation) id: string,
+  ): Promise<ResponseWebSuccess> {
+    const result = await this.biblioService.getById(id);
+
+    return {
+      data: result,
+      message: 'success retrieved bibliography by id',
       status: 'success',
       statusCode: 200,
     };

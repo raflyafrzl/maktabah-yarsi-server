@@ -23,39 +23,10 @@ export class BibliografiService {
       .find()
       .populate('category')
       .populate('sub_category');
-    if (query.id) {
-      result = result.find({
-        _id: mongoose.Types.ObjectId.createFromHexString(query.id),
-      });
-      return result;
-    }
 
     if (query.sort) {
       const sortBy = query.sort.split(',').join(' ');
       result = result.sort(sortBy).limit(6).skip(0);
-    }
-    let res: Category;
-    if (query.category) {
-      if (!mongoose.Types.ObjectId.isValid(query.category)) {
-        res = await this.categoryService.findOne(query.category);
-        query.category = res['_id'].toString();
-      }
-      result = result.find({
-        category_id: mongoose.Types.ObjectId.createFromHexString(
-          query.category,
-        ),
-      });
-
-      return result;
-    }
-
-    if (query.sub_category) {
-      result = result.find({
-        subcategory_id: mongoose.Types.ObjectId.createFromHexString(
-          query.sub_category,
-        ),
-      });
-      return result;
     }
 
     return result;
@@ -109,6 +80,18 @@ export class BibliografiService {
     );
   }
 
+  async getById(id: string) {
+    const result = this.bibliografi
+      .findById(id)
+      .populate('category')
+      .populate('sub_category');
+
+    if (!result)
+      throw new CustomClientException('no data found', 404, 'NOT_FOUND');
+
+    return result;
+  }
+
   async deleteOne(id: string) {
     const result: Bibliography = await this.bibliografi.findById(id);
 
@@ -128,7 +111,23 @@ export class BibliografiService {
       );
 
     return this.bibliografi
-      .updateOne({ _id: id }, { $set: payload }, { new: true })
+      .updateOne({ _id: result['_id'] }, { $set: payload }, { new: true })
       .lean();
+  }
+
+  async findByCategoryId(id: string) {
+    let result = await this.bibliografi.findOne({
+      category_id: mongoose.Types.ObjectId.createFromHexString(id),
+    });
+
+    if (!result) {
+      result = await this.bibliografi.findOne({
+        subcategory_id: mongoose.Types.ObjectId.createFromHexString(id),
+      });
+
+      if (!result)
+        throw new CustomClientException('no data found', 400, 'NOT_FOUND');
+    }
+    return result;
   }
 }

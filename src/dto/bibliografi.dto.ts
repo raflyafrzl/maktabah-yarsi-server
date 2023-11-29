@@ -67,33 +67,12 @@ export class BibliografiCreateOrUpdateDTO {
 
 export class QueryFindBibliografi {
   @ApiProperty({
-    default: 'id dari bibliografi',
-    type: String,
-    required: false,
-    description: 'id of the bibliography',
-  })
-  id: string;
-  @ApiProperty({
     default: 'createdAt',
     type: String,
     required: false,
     description: 'field to sort the bibliography',
   })
   sort: string;
-  @ApiProperty({
-    default: 'Fiqih',
-    type: String,
-    required: false,
-    description: 'category name or category id',
-  })
-  category: string;
-  @ApiProperty({
-    default: 'Fiqih Jinayah',
-    type: String,
-    required: false,
-    description: 'sub category id or name',
-  })
-  sub_category: string;
 }
 export const validationQueryFindBibliografi: Joi.ObjectSchema<QueryFindBibliografi> =
   Joi.object({
