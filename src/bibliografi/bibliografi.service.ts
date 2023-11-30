@@ -116,9 +116,12 @@ export class BibliografiService {
   }
 
   async findByCategoryId(id: string) {
-    let result = await this.bibliografi.findOne({
-      category_id: mongoose.Types.ObjectId.createFromHexString(id),
-    });
+    let result = await this.bibliografi
+      .find({
+        category_id: mongoose.Types.ObjectId.createFromHexString(id),
+      })
+      .populate('category')
+      .populate('sub_category');
 
     if (!result) {
       result = await this.bibliografi.findOne({

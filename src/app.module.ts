@@ -11,6 +11,7 @@ import { BibliografiModule } from './bibliografi/bibliografi.module';
 import { VisitorModule } from './visitor/visitor.module';
 import { ListcontentModule } from './listcontent/listcontent.module';
 import { ContentModule } from './content/content.module';
+import { SearchModule } from './search/search.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { ContentModule } from './content/content.module';
     VisitorModule,
     ListcontentModule,
     ContentModule,
+    SearchModule,
   ],
   controllers: [AppController, AuthController],
   providers: [],
