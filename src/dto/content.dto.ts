@@ -1,7 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import * as Joi from 'joi';
 import mongoose from 'mongoose';
-import { ContentHelper } from 'src/schemas/content.schema';
 
 export class CreateOrUpdateContentDTO {
   @ApiProperty({
@@ -28,19 +27,6 @@ export class CreateOrUpdateContentDTO {
     default: 2,
   })
   page: number;
-  @ApiProperty({
-    type: [ContentHelper],
-    description: 'sub of the content',
-    default: [
-      {
-        heading: 'bab 2',
-        text: 'isi dari content nya, lorem ipsum',
-        page: 3,
-        sub: [],
-      },
-    ],
-  })
-  sub: ContentHelper[];
 }
 
 export const validationCreateContent: Joi.ObjectSchema<CreateOrUpdateContentDTO> =
@@ -53,6 +39,4 @@ export const validationCreateContent: Joi.ObjectSchema<CreateOrUpdateContentDTO>
 
       return helper.error('invalid listcontent id');
     }).required(),
-
-    sub: Joi.array().items(Joi.any()).required(),
   });
