@@ -73,13 +73,18 @@ export class QueryFindBibliografi {
     description: 'field to sort the bibliography',
   })
   sort: string;
+  @ApiProperty({
+    default: 'fiqih',
+    type: String,
+    required: false,
+    description: 'name of the bibliography',
+  })
+  title: string;
 }
 export const validationQueryFindBibliografi: Joi.ObjectSchema<QueryFindBibliografi> =
   Joi.object({
-    id: Joi.string(),
+    title: Joi.string(),
     sort: Joi.string().valid('createdAt', 'total'),
-    category: Joi.string(),
-    sub_category: Joi.string(),
   });
 
 export const validationCreateBibliografi: Joi.ObjectSchema<BibliografiCreateOrUpdateDTO> =

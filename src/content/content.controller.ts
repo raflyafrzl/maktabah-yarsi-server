@@ -1,10 +1,12 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
   Param,
+  Patch,
   Post,
   UseFilters,
 } from '@nestjs/common';
@@ -16,8 +18,10 @@ import { JoiValidation } from 'src/pipes/validation.pipe';
 import {
   CreateOrUpdateContentDTO,
   validationCreateContent,
+  validationUpdateContent,
 } from 'src/dto/content.dto';
 import { HttpExceptionFilter } from 'src/exception/http-exception.filter';
+import { MongoExceptionFilter } from 'src/exception/mongo-exception.filter';
 
 @ApiTags('contents')
 @Controller('api/v1/contents')
@@ -45,11 +49,12 @@ export class ContentController {
   }
 
   @Post('/')
-  @UseFilters(HttpExceptionFilter)
+  @UseFilters(HttpExceptionFilter, MongoExceptionFilter)
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'create a content ' })
   @ApiResponse({ status: 200, description: 'success created a content' })
   @ApiResponse({ status: 500, description: 'internal server error' })
+  @ApiResponse({ status: 400, description: 'invalid payload provided' })
   @ApiResponse({
     status: 400,
     description: 'bad request while creating a content',
@@ -65,6 +70,47 @@ export class ContentController {
       status: 'success',
       statusCode: 201,
       message: 'success created a content',
+    };
+  }
+  @Patch('/:id')
+  @UseFilters(HttpExceptionFilter)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'update a content ' })
+  @ApiResponse({ status: 200, description: 'success update a content' })
+  @ApiResponse({ status: 500, description: 'internal server error' })
+  @ApiResponse({ status: 400, description: 'invalid payload provided' })
+  @ApiResponse({ status: 404, description: 'no data found' })
+  async update(
+    @Param('id', MongoIdValidation) id: string,
+    @Body(new JoiValidation(validationUpdateContent))
+    payload: CreateOrUpdateContentDTO,
+  ): Promise<ResponseWebSuccess> {
+    const result = await this.contentService.updateOne(id, payload);
+
+    return {
+      data: result,
+      message: 'successfully updated content',
+      status: 'success',
+      statusCode: 200,
+    };
+  }
+  @Delete('/:id')
+  @UseFilters(HttpExceptionFilter)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'update a content ' })
+  @ApiResponse({ status: 200, description: 'success delete a content' })
+  @ApiResponse({ status: 404, description: 'no data found' })
+  @ApiResponse({ status: 500, description: 'internal server error' })
+  async delete(
+    @Param('id', MongoIdValidation) id: string,
+  ): Promise<ResponseWebSuccess> {
+    const result = await this.contentService.deleteOne(id);
+
+    return {
+      data: result,
+      message: 'successfully delete a content',
+      status: 'success',
+      statusCode: 200,
     };
   }
 }

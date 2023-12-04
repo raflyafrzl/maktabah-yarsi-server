@@ -24,6 +24,16 @@ export class BibliografiService {
       .populate('category')
       .populate('sub_category');
 
+    if (query.title) {
+      result = result
+        .find({
+          title: {
+            $regex: query.title,
+            $options: 'i',
+          },
+        })
+        .limit(10);
+    }
     if (query.sort) {
       const sortBy = query.sort.split(',').join(' ');
       result = result.sort(sortBy).limit(6).skip(0);

@@ -8,7 +8,7 @@ export class AppController {
   getHello(): any {
     return {
       message: 'Welcome to Maktabah Yarsi API',
-      version: 1.0,
+      version: 2.0,
     };
   }
 }
