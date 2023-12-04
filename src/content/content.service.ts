@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { query } from 'express';
 import mongoose, { Model } from 'mongoose';
 import { CreateOrUpdateContentDTO, QuerySearch } from 'src/dto/content.dto';
 import { CustomClientException } from 'src/exception/custom.exception';
@@ -62,6 +61,7 @@ export class ContentService {
       value: result.listcontent.toString(),
       key: 'listcontent',
       index: 'contents',
+      wild_card: false,
     };
 
     const { hits } = await this.esService.search(query);
@@ -100,6 +100,7 @@ export class ContentService {
       value: result.listcontent.toString(),
       key: 'listcontent',
       index: 'contents',
+      wild_card: false,
     };
     const { hits } = await this.esService.search(query);
 

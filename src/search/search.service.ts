@@ -7,14 +7,30 @@ export class SearchService {
   constructor(private elasticService: ElasticsearchService) {}
 
   async search(query: QuerySearch) {
-    const jsonString = `{
+    let jsonString: string;
+
+    if (query.wild_card) {
+      jsonString = `{
+        "query": {
+          "wildcard": {
+            "${query.key}": {
+              "value": "*${query.value}*"
+            }
+          }
+        }
+      }`;
+    } else {
+      jsonString = `{
       "query" : {
          "${query.type}": {
-           "${query.key}": "${query.value}"
+           "${query.key}": {
+              "query": "${query.value}",
+              "fuzziness": "auto"
+           }
          }
       }
    }`;
-
+    }
     return this.elasticService.search({
       index: query.index,
       body: JSON.parse(jsonString),

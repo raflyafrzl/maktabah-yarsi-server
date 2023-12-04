@@ -55,6 +55,12 @@ export class QuerySearch {
     description: 'which index(db) user looking for the document(data)',
   })
   index: string;
+  @ApiProperty({
+    type: Boolean,
+    default: true,
+    description: 'exact match or not',
+  })
+  wild_card: boolean;
 }
 
 export const validationCreateContent: Joi.ObjectSchema<CreateOrUpdateContentDTO> =
@@ -75,6 +81,7 @@ export const validationSearchElastic: Joi.ObjectSchema<QuerySearch> =
     type: Joi.string().valid('match_phrase', 'match'),
     key: Joi.string(),
     value: Joi.string(),
+    wild_card: Joi.boolean(),
   });
 
 export const validationUpdateContent: Joi.ObjectSchema<CreateOrUpdateContentDTO> =
