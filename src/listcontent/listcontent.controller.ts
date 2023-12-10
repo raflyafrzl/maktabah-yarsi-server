@@ -73,7 +73,7 @@ export class ListcontentController {
   async getByBibliographyId(
     @Param('id', new MongoIdValidation()) id: string,
   ): Promise<ResponseWebSuccess> {
-    const result: ListContent =
+    const result: ListContent[] =
       await this.listContentService.getByBibliographyId(id);
 
     return {
