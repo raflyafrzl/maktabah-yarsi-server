@@ -22,6 +22,7 @@ import {
 } from 'src/dto/content.dto';
 import { HttpExceptionFilter } from 'src/exception/http-exception.filter';
 import { MongoExceptionFilter } from 'src/exception/mongo-exception.filter';
+import { Content } from 'src/schemas/content.schema';
 
 @ApiTags('contents')
 @Controller('api/v1/contents')
@@ -29,6 +30,26 @@ export class ContentController {
   constructor(private contentService: ContentService) {}
 
   @Get('/:id')
+  @UseFilters(HttpExceptionFilter)
+  @ApiOperation({ summary: 'get a content by listcontent id' })
+  @ApiResponse({ status: 200, description: 'success retrieved a content' })
+  @ApiResponse({ status: 500, description: 'internal server error' })
+  @ApiResponse({ status: 400, description: 'invalid id provided' })
+  @ApiResponse({ status: 404, description: 'no data found' })
+  async getById(
+    @Param('id', MongoIdValidation) id: string,
+  ): Promise<ResponseWebSuccess> {
+    const result: Content = await this.contentService.findById(id);
+
+    return {
+      message: 'success retrieved contens',
+      data: result,
+      status: 'success',
+      statusCode: 200,
+    };
+  }
+
+  @Get('listcontent/:id')
   @UseFilters(HttpExceptionFilter)
   @ApiOperation({ summary: 'get a content by listcontent id' })
   @ApiResponse({ status: 200, description: 'success retrieved a content' })
@@ -97,7 +118,7 @@ export class ContentController {
   @Delete('/:id')
   @UseFilters(HttpExceptionFilter)
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'update a content ' })
+  @ApiOperation({ summary: 'delete a content ' })
   @ApiResponse({ status: 200, description: 'success delete a content' })
   @ApiResponse({ status: 404, description: 'no data found' })
   @ApiResponse({ status: 500, description: 'internal server error' })

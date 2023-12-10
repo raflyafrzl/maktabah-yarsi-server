@@ -37,10 +37,7 @@ export class ContentService {
         400,
         'BAD_REQUEST',
       );
-
-    this.esService.create<CreateOrUpdateContentDTO>('contents', payload);
-
-    return this.content.create({
+    const data: Content = await this.content.create({
       heading: payload.heading,
       text: payload.text,
       listcontent: mongoose.Types.ObjectId.createFromHexString(
@@ -48,6 +45,10 @@ export class ContentService {
       ),
       page: payload.page,
     });
+
+    this.esService.create<Content>('contents', data);
+
+    return data;
   }
 
   async updateOne(id: string, payload: CreateOrUpdateContentDTO) {
@@ -111,5 +112,15 @@ export class ContentService {
     this.content.deleteOne({
       _id: mongoose.Types.ObjectId.createFromHexString(id),
     });
+  }
+
+  async findById(id: string) {
+    const result = await this.content.findById(id)
+
+    if (!result) {
+      throw new CustomClientException('no content found', 400, 'BAD_REQUEST');
+    }
+
+    return result;
   }
 }
