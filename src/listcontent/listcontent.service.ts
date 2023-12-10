@@ -52,7 +52,7 @@ export class ListcontentService {
         400,
         'BAD_REQUEST',
       );
-    return this.listContent.findOne({
+    return this.listContent.find({
       bibliography: mongoose.Types.ObjectId.createFromHexString(id),
     });
   }
