@@ -150,10 +150,13 @@ export class BibliografiService {
       .populate('category')
       .populate('sub_category');
 
-    if (!result) {
-      result = await this.bibliografi.findOne({
-        subcategory_id: mongoose.Types.ObjectId.createFromHexString(id),
-      });
+    if (result.length === 0) {
+      result = await this.bibliografi
+        .find({
+          subcategory_id: mongoose.Types.ObjectId.createFromHexString(id),
+        })
+        .populate('category')
+        .populate('sub_category');
 
       if (!result)
         throw new CustomClientException('no data found', 400, 'NOT_FOUND');

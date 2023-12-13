@@ -95,7 +95,7 @@ export const validationCreateBibliografi: Joi.ObjectSchema<BibliografiCreateOrUp
     contributor: Joi.string().required(),
     creator: Joi.string().required(),
     source: Joi.string().required(),
-    image_url: Joi.string().required().uri(),
+    image_url: Joi.string().uri(),
     category: Joi.string().required(),
     subcategory: Joi.string(),
     page: Joi.number().required(),
