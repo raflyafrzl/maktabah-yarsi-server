@@ -36,7 +36,7 @@ export class BibliografiService {
     }
     if (query.sort) {
       const sortBy = query.sort.split(',').join(' ');
-      result = result.sort(sortBy).limit(6).skip(0);
+      result = result.sort(sortBy);
     }
 
     return result;
