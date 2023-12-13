@@ -46,6 +46,7 @@ export class BibliografiService {
     const result: Category = await this.categoryService.findOne(
       payload.category,
     );
+    console.log(result);
     if (!result)
       throw new CustomClientException('No Category Found', 400, 'BAD_REQUEST');
 
@@ -56,24 +57,40 @@ export class BibliografiService {
     };
 
     this.categoryService.updateOne(id, categoryUpdate);
+    let resultSub: SubCategory;
+    if (payload.subcategory) {
+      resultSub = await this.categoryService.findOneSubByName(
+        payload.subcategory,
+      );
+      if (!resultSub)
+        throw new CustomClientException(
+          'No Category Found',
+          400,
+          'BAD_REQUEST',
+        );
 
-    const resultSub: SubCategory = await this.categoryService.findOneSubByName(
-      payload.subcategory,
-    );
-
-    if (!resultSub)
-      throw new CustomClientException('No Category Found', 400, 'BAD_REQUEST');
-
-    this.categoryService.updateSubCategory({
-      name: resultSub.name,
-      total: 1,
-    });
-    this.bibliografi.create({
+      this.categoryService.updateSubCategory({
+        name: resultSub.name,
+        total: 1,
+      });
+      return this.bibliografi.create({
+        title: payload.title,
+        contributor: payload.contributor,
+        source: payload.source,
+        category_id: mongoose.Types.ObjectId.createFromHexString(id),
+        subcategory_id: resultSub['_id'] || '',
+        image_url: payload.image_url,
+        description: payload.description,
+        publisher: payload.publisher,
+        creator: payload.creator,
+        page: payload.page,
+      });
+    }
+    return this.bibliografi.create({
       title: payload.title,
       contributor: payload.contributor,
       source: payload.source,
       category_id: mongoose.Types.ObjectId.createFromHexString(id),
-      subcategory_id: resultSub['_id'],
       image_url: payload.image_url,
       description: payload.description,
       publisher: payload.publisher,

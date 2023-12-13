@@ -28,7 +28,7 @@ export class SubCategory {
   @Prop({ required: true, default: 0 })
   total: number;
 
-  @Prop({ type: Types.ObjectId, ref: Category.name })
+  @Prop({ type: Types.ObjectId, ref: Category.name, required: false })
   category: Category;
 }
 

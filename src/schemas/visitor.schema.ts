@@ -34,18 +34,18 @@ export const validationQueryVisitor: Joi.ObjectSchema<QueryParamVisitorDTO> =
   Joi.object({
     month: Joi.string()
       .valid(
-        'januari',
-        'februari',
-        'maret',
+        'january',
+        'february',
+        'march',
         'april',
-        'mei',
-        'juni',
-        'juli',
-        'agustus',
+        'may',
+        'june',
+        'july',
+        'august',
         'september',
         'oktober',
         'november',
-        'desember',
+        'december',
       )
       .required(),
     year: Joi.number().required(),

@@ -115,7 +115,7 @@ export class ContentService {
   }
 
   async findById(id: string) {
-    const result = await this.content.findById(id)
+    const result = await this.content.findById(id);
 
     if (!result) {
       throw new CustomClientException('no content found', 400, 'BAD_REQUEST');
