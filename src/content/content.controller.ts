@@ -30,7 +30,7 @@ export class ContentController {
   constructor(private contentService: ContentService) {}
 
   @Get('/:id')
-  @UseFilters(HttpExceptionFilter)
+  @UseFilters(HttpExceptionFilter, MongoExceptionFilter)
   @ApiOperation({ summary: 'get a content by listcontent id' })
   @ApiResponse({ status: 200, description: 'success retrieved a content' })
   @ApiResponse({ status: 500, description: 'internal server error' })
@@ -49,8 +49,8 @@ export class ContentController {
     };
   }
 
-  @Get('listcontent/:id')
-  @UseFilters(HttpExceptionFilter)
+  @Get('bibliography/:id')
+  @UseFilters(HttpExceptionFilter, MongoExceptionFilter)
   @ApiOperation({ summary: 'get a content by listcontent id' })
   @ApiResponse({ status: 200, description: 'success retrieved a content' })
   @ApiResponse({ status: 500, description: 'internal server error' })
@@ -59,7 +59,7 @@ export class ContentController {
   async getByListContentId(
     @Param('id', MongoIdValidation) id: string,
   ): Promise<ResponseWebSuccess> {
-    const result = await this.contentService.findByListContentId(id);
+    const result = await this.contentService.findByBibliographyId(id);
 
     return {
       message: 'success retrieved contens',
@@ -94,7 +94,7 @@ export class ContentController {
     };
   }
   @Patch('/:id')
-  @UseFilters(HttpExceptionFilter)
+  @UseFilters(HttpExceptionFilter, MongoExceptionFilter)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'update a content ' })
   @ApiResponse({ status: 200, description: 'success update a content' })
@@ -116,7 +116,7 @@ export class ContentController {
     };
   }
   @Delete('/:id')
-  @UseFilters(HttpExceptionFilter)
+  @UseFilters(HttpExceptionFilter, MongoExceptionFilter)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'delete a content ' })
   @ApiResponse({ status: 200, description: 'success delete a content' })

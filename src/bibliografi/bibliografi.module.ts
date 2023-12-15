@@ -14,5 +14,6 @@ import { CategoryModule } from 'src/category/category.module';
   ],
   controllers: [BibliografiController],
   providers: [BibliografiService],
+  exports: [BibliografiService],
 })
 export class BibliografiModule {}

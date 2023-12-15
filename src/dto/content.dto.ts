@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import * as Joi from 'joi';
 import mongoose from 'mongoose';
+import { ContentHelper } from 'src/schemas/content.schema';
 
 export class CreateOrUpdateContentDTO {
   @ApiProperty({
@@ -20,13 +21,25 @@ export class CreateOrUpdateContentDTO {
     description: 'id dari listcontent',
     default: '123asdasdavzxczxc',
   })
-  listcontent: string;
+  bibliography: string;
   @ApiProperty({
     type: Number,
     description: 'page of the content',
     default: 2,
   })
   page: number;
+  @ApiProperty({
+    type: Number,
+    description: 'size of the content',
+    default: 1,
+  })
+  size: number;
+  @ApiProperty({
+    type: [ContentHelper],
+    description: 'sub content',
+    default: [],
+  })
+  sub: ContentHelper[];
 }
 
 export class QuerySearch {
@@ -68,7 +81,9 @@ export const validationCreateContent: Joi.ObjectSchema<CreateOrUpdateContentDTO>
     heading: Joi.string().required(),
     text: Joi.string().required(),
     page: Joi.number().required(),
-    listcontent: Joi.custom((value: string, helper) => {
+    size: Joi.number(),
+    sub: Joi.array(),
+    bibliography: Joi.custom((value: string, helper) => {
       if (mongoose.Types.ObjectId.isValid(value)) return value;
 
       return helper.error('invalid listcontent id');
@@ -89,7 +104,9 @@ export const validationUpdateContent: Joi.ObjectSchema<CreateOrUpdateContentDTO>
     heading: Joi.string(),
     text: Joi.string(),
     page: Joi.number(),
-    listcontent: Joi.custom((value: string, helper) => {
+    size: Joi.number(),
+    sub: Joi.array(),
+    bibliography: Joi.custom((value: string, helper) => {
       if (mongoose.Types.ObjectId.isValid(value)) return value;
 
       return helper.error('invalid listcontent id');

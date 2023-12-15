@@ -1,8 +1,16 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { ListContent } from './listcontent.schema';
+
 import mongoose, { HydratedDocument } from 'mongoose';
+import { Bibliography } from './bibliografi.schema';
 
 export type ContentDocument = HydratedDocument<Content>;
+
+export class ContentHelper {
+  text: string;
+  heading: string;
+  page: number;
+  sub: ContentHelper[];
+}
 
 @Schema({ versionKey: false })
 export class Content {
@@ -12,16 +20,21 @@ export class Content {
   @Prop({
     type: mongoose.Types.ObjectId,
     required: true,
-    ref: ListContent.name,
-    unique: true,
+    ref: Bibliography.name,
   })
-  listcontent: ListContent;
+  bibliography: Bibliography;
 
   @Prop({ type: Number, required: true })
   page: number;
 
   @Prop({ type: String, required: true })
   text: string;
+
+  @Prop({ type: Number, required: true })
+  size: number;
+
+  @Prop()
+  sub: ContentHelper[];
 }
 
 export const ContentSchema: mongoose.Schema<Content> =

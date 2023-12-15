@@ -8,6 +8,7 @@ export class MongoExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
     let error: ResponseWebError;
+    console.log(exception.code);
     switch (exception.code) {
       case 11000:
         const pattern = /dup key: { (\w+):/;

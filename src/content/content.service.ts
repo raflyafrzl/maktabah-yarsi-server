@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
+import { BibliografiService } from 'src/bibliografi/bibliografi.service';
 import { CreateOrUpdateContentDTO, QuerySearch } from 'src/dto/content.dto';
 import { CustomClientException } from 'src/exception/custom.exception';
+import { Bibliography } from 'src/schemas/bibliografi.schema';
 import { Content } from 'src/schemas/content.schema';
 import { SearchService } from 'src/search/search.service';
 
@@ -11,11 +13,12 @@ export class ContentService {
   constructor(
     @InjectModel(Content.name) private content: Model<Content>,
     private esService: SearchService,
+    private biblioService: BibliografiService,
   ) {}
 
-  async findByListContentId(id: string) {
-    const result = await this.content.findOne({
-      listcontent: mongoose.Types.ObjectId.createFromHexString(id),
+  async findByBibliographyId(id: string) {
+    const result: Content[] = await this.content.find({
+      bibliography: mongoose.Types.ObjectId.createFromHexString(id),
     });
 
     if (!result)
@@ -26,8 +29,8 @@ export class ContentService {
 
   async create(payload: CreateOrUpdateContentDTO) {
     const result: Content = await this.content.findOne({
-      listcontent: mongoose.Types.ObjectId.createFromHexString(
-        payload.listcontent,
+      bibliography: mongoose.Types.ObjectId.createFromHexString(
+        payload.bibliography,
       ),
     });
 
@@ -37,16 +40,25 @@ export class ContentService {
         400,
         'BAD_REQUEST',
       );
+
+    const biblio: Bibliography = await this.biblioService.getById(
+      payload.bibliography,
+    );
+
     const data: Content = await this.content.create({
       heading: payload.heading,
       text: payload.text,
-      listcontent: mongoose.Types.ObjectId.createFromHexString(
-        payload.listcontent,
+      size: payload.size,
+      sub: payload.sub,
+      bibliography: mongoose.Types.ObjectId.createFromHexString(
+        payload.bibliography,
       ),
       page: payload.page,
     });
 
-    this.esService.create<Content>('contents', data);
+    payload.bibliography = biblio.title;
+
+    this.esService.create<CreateOrUpdateContentDTO>('contents', payload);
 
     return data;
   }
@@ -59,8 +71,8 @@ export class ContentService {
 
     const query: QuerySearch = {
       type: 'match_phrase',
-      value: result.listcontent.toString(),
-      key: 'listcontent',
+      value: result.bibliography.toString(),
+      key: 'bibliography',
       index: 'contents',
       wild_card: false,
     };
@@ -98,8 +110,8 @@ export class ContentService {
 
     const query: QuerySearch = {
       type: 'match_phrase',
-      value: result.listcontent.toString(),
-      key: 'listcontent',
+      value: result.bibliography.toString(),
+      key: 'bibliography',
       index: 'contents',
       wild_card: false,
     };
