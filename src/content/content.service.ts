@@ -24,9 +24,9 @@ export class ContentService {
     const result: Content[] = await this.content
       .find({
         bibliography: mongoose.Types.ObjectId.createFromHexString(id),
-        pages: query.page,
+        page: Number(query.page),
       })
-      .limit(query.size);
+      .limit(Number(query.size));
 
     if (!result)
       throw new CustomClientException('no content found', 404, 'NOT_FOUND');
@@ -35,23 +35,15 @@ export class ContentService {
   }
 
   async create(payload: CreateOrUpdateContentDTO) {
-    const result: Content = await this.content.findOne({
-      bibliography: mongoose.Types.ObjectId.createFromHexString(
-        payload.bibliography,
-      ),
-    });
-
-    if (result)
-      throw new CustomClientException(
-        'content has already created',
-        400,
-        'BAD_REQUEST',
-      );
-
     const biblio: Bibliography = await this.biblioService.getById(
       payload.bibliography,
     );
-
+    if (!biblio)
+      throw new CustomClientException(
+        'bibliography is not found',
+        404,
+        'BAD_REQUEST',
+      );
     const data: Content = await this.content.create({
       heading: payload.heading,
       text: payload.text,
