@@ -42,6 +42,21 @@ export class CreateOrUpdateContentDTO {
   sub: ContentHelper[];
 }
 
+export class QueryContent {
+  @ApiProperty({
+    type: Number,
+    description: 'page query',
+    example: 5,
+  })
+  page: number;
+  @ApiProperty({
+    type: Number,
+    description: 'page query',
+    example: 1,
+  })
+  size: number;
+}
+
 export class QuerySearch {
   @ApiProperty({
     type: String,
@@ -111,4 +126,10 @@ export const validationUpdateContent: Joi.ObjectSchema<CreateOrUpdateContentDTO>
 
       return helper.error('invalid listcontent id');
     }),
+  });
+
+export const validationQueryContent: Joi.ObjectSchema<QueryContent> =
+  Joi.object({
+    page: Joi.number().min(1).required(),
+    size: Joi.number().min(1).required(),
   });

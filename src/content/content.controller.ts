@@ -8,6 +8,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseFilters,
 } from '@nestjs/common';
 import { ContentService } from './content.service';
@@ -17,7 +18,9 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JoiValidation } from 'src/pipes/validation.pipe';
 import {
   CreateOrUpdateContentDTO,
+  QueryContent,
   validationCreateContent,
+  validationQueryContent,
   validationUpdateContent,
 } from 'src/dto/content.dto';
 import { HttpExceptionFilter } from 'src/exception/http-exception.filter';
@@ -58,8 +61,9 @@ export class ContentController {
   @ApiResponse({ status: 404, description: 'no data found' })
   async getByListContentId(
     @Param('id', MongoIdValidation) id: string,
+    @Query(new JoiValidation(validationQueryContent)) query: QueryContent,
   ): Promise<ResponseWebSuccess> {
-    const result = await this.contentService.findByBibliographyId(id);
+    const result = await this.contentService.findByBibliographyId(id, query);
 
     return {
       message: 'success retrieved contens',

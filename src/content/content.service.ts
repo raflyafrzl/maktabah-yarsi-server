@@ -2,7 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import { BibliografiService } from 'src/bibliografi/bibliografi.service';
-import { CreateOrUpdateContentDTO, QuerySearch } from 'src/dto/content.dto';
+import {
+  CreateOrUpdateContentDTO,
+  QueryContent,
+  QuerySearch,
+} from 'src/dto/content.dto';
 import { CustomClientException } from 'src/exception/custom.exception';
 import { Bibliography } from 'src/schemas/bibliografi.schema';
 import { Content } from 'src/schemas/content.schema';
@@ -16,10 +20,13 @@ export class ContentService {
     private biblioService: BibliografiService,
   ) {}
 
-  async findByBibliographyId(id: string) {
-    const result: Content[] = await this.content.find({
-      bibliography: mongoose.Types.ObjectId.createFromHexString(id),
-    });
+  async findByBibliographyId(id: string, query: QueryContent) {
+    const result: Content[] = await this.content
+      .find({
+        bibliography: mongoose.Types.ObjectId.createFromHexString(id),
+        pages: query.page,
+      })
+      .limit(query.size);
 
     if (!result)
       throw new CustomClientException('no content found', 404, 'NOT_FOUND');
