@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import { BibliografiService } from 'src/bibliografi/bibliografi.service';
 import {
+  ContentSearch,
   CreateOrUpdateContentDTO,
   QueryContent,
   QuerySearch,
@@ -21,6 +22,8 @@ export class ContentService {
   ) {}
 
   async findByBibliographyId(id: string, query: QueryContent) {
+    const data: Bibliography = await this.biblioService.getById(id);
+
     const result: Content[] = await this.content
       .find({
         bibliography: mongoose.Types.ObjectId.createFromHexString(id),
@@ -30,7 +33,7 @@ export class ContentService {
 
     if (!result)
       throw new CustomClientException('no content found', 404, 'NOT_FOUND');
-
+    await this.biblioService.updateViews(id);
     return result;
   }
 
@@ -55,9 +58,17 @@ export class ContentService {
       page: payload.page,
     });
 
-    payload.bibliography = biblio.title;
+    const dataSearch: ContentSearch = {
+      id_content: data['_id'].toString(),
+      author: biblio.creator,
+      bibliography_title: biblio.title,
+      id_bibliography: biblio['_id'].toString(),
+      text: data.text,
+      page: data.page,
+      heading: data.heading,
+    };
 
-    this.esService.create<CreateOrUpdateContentDTO>('contents', payload);
+    this.esService.create<ContentSearch>('contents', dataSearch);
 
     return data;
   }
@@ -131,7 +142,7 @@ export class ContentService {
     if (!result) {
       throw new CustomClientException('no content found', 400, 'BAD_REQUEST');
     }
-
+    await this.biblioService.updateViews(id);
     return result;
   }
 }

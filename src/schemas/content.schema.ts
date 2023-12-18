@@ -9,7 +9,6 @@ export class ContentHelper {
   text: string;
   heading: string;
   page: number;
-  sub: ContentHelper[];
 }
 
 @Schema({ versionKey: false })

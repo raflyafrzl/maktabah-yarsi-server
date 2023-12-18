@@ -99,7 +99,9 @@ export class BibliografiService {
     });
   }
   async updateViews(id: string) {
-    const result = await this.bibliografi.findOne({ _id: id });
+    const result = await this.bibliografi.findOne({
+      _id: mongoose.Types.ObjectId.createFromHexString(id),
+    });
 
     return this.bibliografi.updateOne(
       { _id: result._id },

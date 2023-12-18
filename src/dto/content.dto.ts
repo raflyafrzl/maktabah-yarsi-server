@@ -91,6 +91,16 @@ export class QuerySearch {
   wild_card: boolean;
 }
 
+export class ContentSearch {
+  bibliography_title: string;
+  id_bibliography: string;
+  author: string;
+  text: string;
+  page: number;
+  heading: string;
+  id_content: string;
+}
+
 export const validationCreateContent: Joi.ObjectSchema<CreateOrUpdateContentDTO> =
   Joi.object({
     heading: Joi.string().required(),

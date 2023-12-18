@@ -26,6 +26,9 @@ export class UserGoogle {
   @Prop({ required: true })
   username: string;
 
+  @Prop({ required: true, default: Date.now() + '', type: String })
+  password: string;
+
   @Prop({ required: true, default: 'user' })
   role: string;
 }
