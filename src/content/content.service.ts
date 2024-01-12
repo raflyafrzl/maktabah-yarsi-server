@@ -142,7 +142,6 @@ export class ContentService {
     if (!result) {
       throw new CustomClientException('no content found', 400, 'BAD_REQUEST');
     }
-    await this.biblioService.updateViews(id);
     return result;
   }
 }
