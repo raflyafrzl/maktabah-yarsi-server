@@ -10,7 +10,7 @@ export class VisitorService {
 
   async find(query: QueryParamVisitorDTO) {
     return this.visitor
-      .find({ month: query.month, year: Number(query.year) })
+      .find()
       .sort('range')
       .lean();
   }
