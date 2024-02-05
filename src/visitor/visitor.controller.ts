@@ -35,7 +35,7 @@ export class VisitorController {
   @ApiResponse({ status: 500, description: 'internal server error' })
   @Get('/')
   async findByMonth(
-    @Query(new JoiValidation(validationQueryVisitor))
+    @Query()
     query: QueryParamVisitorDTO,
   ): Promise<ResponseWebSuccess> {
     const result = await this.visitorService.find(query);
